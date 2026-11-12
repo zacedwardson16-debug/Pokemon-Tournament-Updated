@@ -1,0 +1,2300 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pokémon Tournament Desk</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,700..800&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+/* Layout: a tournament desk on one shared device. Holo-foil title card, a sticky tab rail with a
+   teacher lock, trainer profile cards, and "pairing slips" (table, trainer, tie, trainer). */
+:root{
+  --paper:#EDF0F7; --card:#FFFFFF; --ink:#141A33; --ink-2:#4F5877; --line:#D4D9E7; --line-2:#E5E8F1;
+  --accent:#2F44E0; --accent-ink:#FFFFFF; --accent-soft:#E3E7FD; --accent-line:#BCC5F7;
+  --win:#1B7A52; --win-soft:#DBF1E5; --win-ink:#FFFFFF;
+  --tie:#96600F; --tie-soft:#FAEDD3; --tie-ink:#FFFFFF;
+  --danger:#B3202D; --danger-soft:#FBE2E4;
+  --gold:#D9A520; --silver:#A3ACBD; --bronze:#C07A43; --medal-ink:#17110A;
+  --holo-1:#C7ECFF; --holo-2:#E4D7FF; --holo-3:#FFD9EC; --holo-4:#FFF0C4; --holo-5:#CBF5E3;
+  --holo-ink:#141A33; --holo-edge:#C9D0E5; --holo-rule:rgba(20,26,51,.16); --foil-line:rgba(255,255,255,.38);
+  --sheen:rgba(255,255,255,.75); --chip-on-holo:rgba(255,255,255,.62);
+  --shadow:0 1px 0 rgba(20,26,51,.04), 0 12px 28px -18px rgba(20,26,51,.38);
+  --backdrop:rgba(12,16,34,.45); --av-ring:rgba(20,26,51,.14); --av-shine:rgba(255,255,255,.32);
+
+  /* Badge colours: fixed hues that sit behind white or dark lettering in either theme */
+  --ty-fire:#DD4B26; --ty-water:#2B7AD6; --ty-grass:#2C9554; --ty-lightning:#EFBC17; --ty-psychic:#9547CC;
+  --ty-fighting:#B05A25; --ty-darkness:#2E3B4C; --ty-metal:#6A7889; --ty-dragon:#9C7810; --ty-fairy:#D84B91;
+  --ty-colourless:#BCC1C9; --ty-ink:#FFFFFF; --ty-ink-dark:#1B1608;
+
+  --font-display:"Bricolage Grotesque","Avenir Next","Segoe UI",system-ui,sans-serif;
+  --font-body:"Atkinson Hyperlegible","Segoe UI",system-ui,-apple-system,Roboto,sans-serif;
+  --font-data:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --r-sm:8px; --r-md:12px; --r-lg:18px;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0F1324; --card:#171C33; --ink:#E9ECF8; --ink-2:#A2AAC7; --line:#2B3253; --line-2:#222944;
+    --accent:#8796FF; --accent-ink:#0F1324; --accent-soft:#232B57; --accent-line:#3B4692;
+    --win:#52C893; --win-soft:#143528; --win-ink:#06150E;
+    --tie:#E5B058; --tie-soft:#3A2D14; --tie-ink:#1A1204;
+    --danger:#F27C86; --danger-soft:#3D1D23;
+    --gold:#E7BC45; --silver:#B3BBCC; --bronze:#D58F5B; --medal-ink:#14100A;
+    --holo-1:#1C3658; --holo-2:#33285B; --holo-3:#4A2545; --holo-4:#483D1E; --holo-5:#163F37;
+    --holo-ink:#F3F5FF; --holo-edge:#2F3762; --holo-rule:rgba(255,255,255,.18); --foil-line:rgba(255,255,255,.05);
+    --sheen:rgba(255,255,255,.16); --chip-on-holo:rgba(255,255,255,.12);
+    --shadow:0 1px 0 rgba(0,0,0,.3), 0 14px 30px -18px rgba(0,0,0,.85);
+    --backdrop:rgba(0,0,0,.6); --av-ring:rgba(255,255,255,.18); --av-shine:rgba(255,255,255,.22);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0F1324; --card:#171C33; --ink:#E9ECF8; --ink-2:#A2AAC7; --line:#2B3253; --line-2:#222944;
+  --accent:#8796FF; --accent-ink:#0F1324; --accent-soft:#232B57; --accent-line:#3B4692;
+  --win:#52C893; --win-soft:#143528; --win-ink:#06150E;
+  --tie:#E5B058; --tie-soft:#3A2D14; --tie-ink:#1A1204;
+  --danger:#F27C86; --danger-soft:#3D1D23;
+  --gold:#E7BC45; --silver:#B3BBCC; --bronze:#D58F5B; --medal-ink:#14100A;
+  --holo-1:#1C3658; --holo-2:#33285B; --holo-3:#4A2545; --holo-4:#483D1E; --holo-5:#163F37;
+  --holo-ink:#F3F5FF; --holo-edge:#2F3762; --holo-rule:rgba(255,255,255,.18); --foil-line:rgba(255,255,255,.05);
+  --sheen:rgba(255,255,255,.16); --chip-on-holo:rgba(255,255,255,.12);
+  --shadow:0 1px 0 rgba(0,0,0,.3), 0 14px 30px -18px rgba(0,0,0,.85);
+  --backdrop:rgba(0,0,0,.6); --av-ring:rgba(255,255,255,.18); --av-shine:rgba(255,255,255,.22);
+  color-scheme:dark;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font-family:var(--font-body); font-size:15px; line-height:1.5;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--paper)}
+[hidden]{display:none!important}
+img{max-width:100%}
+h1,h2,h3,h4{text-wrap:balance}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.vh{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0;padding:0;margin:-1px}
+.muted{color:var(--ink-2)}
+.small{font-size:13px}
+
+.wrap{
+  max-width:1120px; margin-inline:auto;
+  padding-left:max(16px, env(safe-area-inset-left,0px));
+  padding-right:max(16px, env(safe-area-inset-right,0px));
+}
+
+/* ---------- Avatars ---------- */
+.av{
+  --s:40px; width:var(--s); height:var(--s); border-radius:50%; overflow:hidden; flex:none;
+  display:inline-grid; place-items:center; position:relative; background:var(--line-2);
+  box-shadow:inset 0 0 0 1px var(--av-ring); vertical-align:middle;
+}
+.av img{width:100%;height:100%;object-fit:cover;display:block}
+.av-badge{background:radial-gradient(circle at 30% 22%, var(--av-shine), transparent 58%), var(--c); color:var(--ci)}
+.av-badge svg{position:absolute;width:74%;height:74%;fill:currentColor;opacity:.26}
+.av-badge b{position:relative;font-family:var(--font-display);font-weight:800;font-size:calc(var(--s) * .38);letter-spacing:-.02em;line-height:1}
+.av-badge b.t3{font-size:calc(var(--s) * .3)}
+.ty-fire{--c:var(--ty-fire);--ci:var(--ty-ink)}
+.ty-water{--c:var(--ty-water);--ci:var(--ty-ink)}
+.ty-grass{--c:var(--ty-grass);--ci:var(--ty-ink)}
+.ty-lightning{--c:var(--ty-lightning);--ci:var(--ty-ink-dark)}
+.ty-psychic{--c:var(--ty-psychic);--ci:var(--ty-ink)}
+.ty-fighting{--c:var(--ty-fighting);--ci:var(--ty-ink)}
+.ty-darkness{--c:var(--ty-darkness);--ci:var(--ty-ink)}
+.ty-metal{--c:var(--ty-metal);--ci:var(--ty-ink)}
+.ty-dragon{--c:var(--ty-dragon);--ci:var(--ty-ink)}
+.ty-fairy{--c:var(--ty-fairy);--ci:var(--ty-ink)}
+.ty-colourless{--c:var(--ty-colourless);--ci:var(--ty-ink-dark)}
+
+/* ---------- Title card (holo foil) ---------- */
+.top{padding-block:20px 14px;display:grid;gap:12px}
+.title-card{
+  position:relative; overflow:hidden; isolation:isolate;
+  border-radius:var(--r-lg); padding:18px 22px 16px; color:var(--holo-ink);
+  background:
+    repeating-linear-gradient(125deg, transparent 0 7px, var(--foil-line) 7px 8px),
+    linear-gradient(118deg, var(--holo-1) 0%, var(--holo-2) 28%, var(--holo-3) 52%, var(--holo-4) 76%, var(--holo-5) 100%);
+  border:1px solid var(--holo-edge); box-shadow:var(--shadow);
+  display:grid; gap:12px;
+}
+.title-card::after{
+  content:""; position:absolute; inset:0; pointer-events:none; z-index:-1;
+  background:linear-gradient(105deg, transparent 38%, var(--sheen) 50%, transparent 62%);
+  background-size:250% 100%; background-position:-30% 0;
+  animation:sheen 2.4s cubic-bezier(.2,.7,.2,1) .35s 1 both;
+}
+.title-card:hover::after{animation:sheen-again 1.5s cubic-bezier(.2,.7,.2,1) 1 both}
+@keyframes sheen{from{background-position:130% 0}to{background-position:-30% 0}}
+@keyframes sheen-again{from{background-position:130% 0}to{background-position:-30% 0}}
+.tc-row{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 16px}
+.eyebrow{font-family:var(--font-data);font-size:12px;letter-spacing:.06em;text-transform:uppercase;font-weight:500}
+.season{font-family:var(--font-data);font-weight:700;font-size:13px;padding:4px 11px;border-radius:999px;background:var(--chip-on-holo);white-space:nowrap}
+.tc-name{font-family:var(--font-display);font-weight:800;font-size:clamp(30px,5.4vw,52px);line-height:1;letter-spacing:-.025em;margin:2px 0 0;overflow-wrap:anywhere}
+.tc-stats{display:flex;flex-wrap:wrap;gap:10px 0;margin:0;border-top:1px solid var(--holo-rule);padding-top:12px}
+.tc-stats > div{padding-right:18px;margin-right:18px;border-right:1px solid var(--holo-rule);min-width:0}
+.tc-stats > div:last-child{border-right:0;margin-right:0;padding-right:0}
+.tc-stats dt{font-size:11px;text-transform:uppercase;letter-spacing:.09em;opacity:.78;font-weight:700}
+.tc-stats dd{margin:0;font-family:var(--font-data);font-weight:700;font-size:16px;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.tc-stats dd.leader{display:flex;align-items:center;gap:8px}
+
+.notices{display:grid;gap:8px}
+.notices:empty{display:none}
+.notice{
+  display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 16px;
+  padding:12px 14px;border-radius:var(--r-md);background:var(--accent-soft);border:1px solid var(--accent-line);color:var(--ink)
+}
+.notice p{margin:0;min-width:0;flex:1 1 280px}
+.notice.is-teacher{background:var(--card);border-color:var(--accent);padding-block:9px}
+.notice.is-warn{background:var(--tie-soft);border-color:var(--tie)}
+
+/* ---------- Tabs + teacher lock ---------- */
+.tabs-bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--paper);border-bottom:1px solid var(--line)}
+.bar-row{display:flex;align-items:center;gap:12px}
+.tabs{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;flex:1 1 auto;min-width:0}
+.tabs::-webkit-scrollbar{display:none}
+.tab{
+  appearance:none;border:0;background:none;font:inherit;font-weight:700;color:var(--ink-2);
+  padding:14px 12px 11px;border-bottom:3px solid transparent;cursor:pointer;white-space:nowrap;
+  display:inline-flex;gap:8px;align-items:center
+}
+.tab:hover{color:var(--ink)}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+.tab .count{font-family:var(--font-data);font-size:11.5px;font-weight:700;background:var(--line-2);border-radius:999px;padding:1px 7px;color:var(--ink-2)}
+.tab[aria-selected="true"] .count{background:var(--accent-soft);color:var(--accent)}
+.mode-btn{
+  flex:none;appearance:none;font:inherit;font-weight:700;font-size:13.5px;display:inline-flex;align-items:center;gap:7px;
+  padding:7px 13px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink-2);cursor:pointer;white-space:nowrap
+}
+.mode-btn svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.mode-btn:hover{color:var(--ink);border-color:var(--ink-2)}
+.mode-btn.is-on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+
+.main{padding-block:22px 56px}
+.panel-head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px 20px;margin-bottom:16px}
+.panel-head h2{font-family:var(--font-display);font-size:30px;font-weight:800;letter-spacing:-.02em;margin:0;line-height:1.1}
+.panel-head p{margin:4px 0 0;color:var(--ink-2)}
+.tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+
+/* ---------- Controls ---------- */
+.btn{
+  appearance:none;font:inherit;font-weight:700;font-size:14px;line-height:1.2;color:var(--ink);
+  background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 14px;min-height:40px;
+  cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;white-space:nowrap
+}
+.btn:hover{border-color:var(--ink-2)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn-primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn-primary:hover{filter:brightness(1.07);border-color:var(--accent)}
+.btn-quiet{background:transparent;border-color:transparent;color:var(--accent)}
+.btn-quiet:hover{background:var(--accent-soft);border-color:transparent}
+.btn-danger{color:var(--danger);border-color:var(--danger)}
+.btn-danger:hover{background:var(--danger-soft);border-color:var(--danger)}
+.btn.is-confirm{background:var(--danger);color:#fff;border-color:var(--danger)}
+.btn-sm{min-height:32px;padding:6px 10px;font-size:13px}
+.input{
+  font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:10px;
+  padding:8px 12px;min-height:40px;width:100%;min-width:0
+}
+.input:focus{border-color:var(--accent);outline:none;box-shadow:0 0 0 3px var(--accent-soft)}
+textarea.input{resize:vertical;line-height:1.45}
+.field{display:grid;gap:6px;min-width:0;margin:0;padding:0;border:0;align-content:start}
+.field > label,.field > legend,.field .lbl{font-size:13px;font-weight:700;color:var(--ink-2);padding:0}
+.field-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.form-msg{margin:0;font-size:13.5px;min-height:1.2em;color:var(--ink-2)}
+.form-msg:empty{display:none}
+.form-msg.is-error{color:var(--danger);font-weight:700}
+.form-msg.is-ok{color:var(--win)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:18px;display:grid;gap:14px;align-content:start;min-width:0}
+.card h3{font-family:var(--font-display);font-size:19px;font-weight:800;margin:0;letter-spacing:-.01em}
+.card h4{margin:0;font-size:14px}
+.btn-row{display:flex;flex-wrap:wrap;gap:8px}
+.empty{padding:28px 20px;border:1px dashed var(--line);border-radius:var(--r-lg);text-align:center;display:grid;gap:10px;justify-items:center;color:var(--ink-2)}
+.empty b{color:var(--ink);font-size:17px}
+.hint{margin:0 0 14px;color:var(--ink-2);font-size:14px}
+.chip{font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:999px;background:var(--line-2);color:var(--ink-2);white-space:nowrap}
+.chip-warn{background:var(--tie-soft);color:var(--tie)}
+.switch{display:inline-flex;align-items:center;gap:10px;font-size:14px;font-weight:700;color:var(--ink);cursor:pointer}
+.switch input{width:18px;height:18px;accent-color:var(--accent);flex:none}
+
+/* ---------- Trainers ---------- */
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,250px),1fr));gap:10px}
+.pcard{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);display:grid;grid-template-rows:1fr auto;min-width:0;overflow:hidden}
+.pcard.is-dropped{background:transparent;border-style:dashed}
+.pcard.is-dropped .pcard-main{opacity:.72}
+.pcard-main{appearance:none;border:0;background:none;font:inherit;color:inherit;text-align:left;cursor:pointer;display:flex;gap:14px;align-items:flex-start;padding:14px 14px 10px;min-width:0;width:100%}
+.pcard-main:hover .pc-name{color:var(--accent)}
+.pc-text{display:grid;gap:1px;min-width:0}
+.pc-name{font-weight:700;font-size:16px;overflow-wrap:anywhere;line-height:1.25}
+.pc-nick{font-family:var(--font-display);font-weight:800;color:var(--accent);font-size:14.5px;line-height:1.2;overflow-wrap:anywhere}
+.pc-meta,.pc-fav{font-size:13px;color:var(--ink-2);overflow-wrap:anywhere}
+.pcard-foot{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;padding:8px 14px 12px;border-top:1px solid var(--line-2)}
+.rstats{font-family:var(--font-data);font-size:12.5px;color:var(--ink-2);white-space:nowrap;font-variant-numeric:tabular-nums;margin-right:auto}
+.status-btn{appearance:none;font:inherit;font-size:12.5px;font-weight:700;border-radius:999px;padding:4px 10px;cursor:pointer;border:1px solid var(--win);background:var(--win-soft);color:var(--win);white-space:nowrap}
+.status-btn[aria-pressed="false"]{border-color:var(--line);background:transparent;color:var(--ink-2)}
+.bulk{margin-bottom:16px;max-width:620px}
+.roster-note{margin:12px 2px 0;font-size:13px;color:var(--ink-2)}
+
+/* ---------- Fixtures ---------- */
+.weeks-rail{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 6px;margin:0 -2px 18px}
+.wchip{
+  flex:none;display:grid;gap:2px;text-align:left;padding:8px 13px 9px;border-radius:var(--r-md);
+  border:1px solid var(--line);background:var(--card);cursor:pointer;font:inherit;color:var(--ink);min-width:100px
+}
+.wchip b{font-family:var(--font-display);font-size:15px;font-weight:800}
+.wchip small{font-family:var(--font-data);font-size:11.5px;color:var(--ink-2);display:flex;align-items:center;gap:6px;white-space:nowrap}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--line);flex:none}
+.dot.done{background:var(--win)} .dot.part{background:var(--tie)}
+.wchip[aria-pressed="true"]{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.wchip.add{border-style:dashed;color:var(--accent);align-content:center}
+.wchip.add b{font-size:14px}
+
+.week-head{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;justify-content:space-between;margin-bottom:10px}
+.week-title{display:flex;align-items:center;gap:10px 16px;flex-wrap:wrap}
+.week-title h3{font-family:var(--font-display);font-size:24px;font-weight:800;margin:0;letter-spacing:-.01em}
+.week-date{font-family:var(--font-data);font-size:13.5px;color:var(--ink-2)}
+.date-input{width:auto;min-height:34px;padding:4px 10px;font-size:14px}
+.progress{display:inline-flex;align-items:center;gap:10px;font-family:var(--font-data);font-size:13px;color:var(--ink-2);white-space:nowrap}
+.meter{width:110px;height:8px;border-radius:99px;background:var(--line-2);overflow:hidden;display:inline-block}
+.meter i{display:block;height:100%;background:var(--win);border-radius:99px}
+
+.slips{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.slip{
+  display:grid;grid-template-columns:62px minmax(0,1fr) 74px minmax(0,1fr);grid-template-areas:"no a tie b";
+  gap:8px;align-items:stretch;padding:8px;border-radius:var(--r-md);background:var(--card);border:1px solid var(--line)
+}
+.tno{grid-area:no;display:grid;align-content:center;justify-items:center;font-family:var(--font-data);font-weight:700;font-size:21px;line-height:1;font-variant-numeric:tabular-nums}
+.tno small{display:block;font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-2);font-weight:500;margin-bottom:4px}
+.pl{
+  grid-area:a;appearance:none;font:inherit;color:inherit;text-align:left;cursor:pointer;
+  border:1px solid var(--line);background:var(--paper);border-radius:10px;padding:8px 12px 8px 9px;min-height:58px;min-width:0;
+  display:grid;grid-template-columns:auto minmax(0,1fr) auto;grid-template-areas:"av name tag" "av meta tag";align-items:center;column-gap:10px
+}
+.pl-b{grid-area:b;text-align:right;padding:8px 9px 8px 12px;grid-template-columns:auto minmax(0,1fr) auto;grid-template-areas:"tag name av" "tag meta av"}
+.pl .av{grid-area:av}
+.pl:hover{border-color:var(--ink-2)}
+.pl-name{grid-area:name;font-weight:700;overflow-wrap:anywhere;line-height:1.25}
+.pl-meta{grid-area:meta;font-size:12.5px;color:var(--ink-2)}
+.tag{grid-area:tag;font-family:var(--font-data);font-size:11px;font-weight:700;letter-spacing:.07em;padding:4px 8px;border-radius:6px;text-transform:uppercase;white-space:nowrap}
+.tag:empty{display:none}
+.tag.t-win{background:var(--win);color:var(--win-ink)}
+.tag.t-loss{background:var(--line-2);color:var(--ink-2)}
+.tag.t-tie{background:var(--tie);color:var(--tie-ink)}
+.tie-btn{
+  grid-area:tie;appearance:none;font:inherit;font-weight:700;font-size:13px;color:var(--ink-2);cursor:pointer;
+  border:1px dashed var(--line);background:transparent;border-radius:10px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:6px
+}
+.tie-btn .vs{font-family:var(--font-data);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;font-weight:500}
+.tie-btn:hover{border-color:var(--ink-2);color:var(--ink)}
+.tie-btn.is-static{cursor:default;border-color:transparent}
+.tie-btn.is-static:hover{color:var(--ink-2)}
+.slip[data-state="a"] .pl-a,.slip[data-state="b"] .pl-b{background:var(--win-soft);border-color:var(--win)}
+.slip[data-state="a"] .pl-b,.slip[data-state="b"] .pl-a{opacity:.7}
+.slip[data-state="tie"] .pl{background:var(--tie-soft);border-color:var(--tie)}
+.slip[data-state="tie"] .tie-btn{background:var(--tie-soft);border:1px solid var(--tie);color:var(--tie)}
+.slip.bye{grid-template-columns:62px minmax(0,1fr);grid-template-areas:"no a";background:transparent;border-style:dashed}
+.bye-line{grid-area:a;display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;padding:6px 4px}
+.tag.t-bye{background:var(--accent-soft);color:var(--accent)}
+.slip.editing{grid-template-columns:62px minmax(0,1fr) 30px minmax(0,1fr) 40px;grid-template-areas:"no a vs b x";align-items:center}
+.slip.editing .sel-a{grid-area:a}.slip.editing .sel-b{grid-area:b}
+.slip.editing .vs-txt{grid-area:vs;text-align:center;font-family:var(--font-data);font-size:12px;color:var(--ink-2)}
+.slip.editing .x{grid-area:x}
+.icon-btn{appearance:none;border:1px solid transparent;background:transparent;color:var(--ink-2);border-radius:8px;width:40px;height:40px;cursor:pointer;font-size:18px;line-height:1;flex:none}
+.icon-btn:hover{background:var(--danger-soft);color:var(--danger)}
+.warn{margin:12px 0 0;padding:10px 12px;border-radius:var(--r-md);background:var(--tie-soft);color:var(--ink);border:1px solid var(--tie);font-size:14px}
+.info{margin:12px 0 0;font-size:14px;color:var(--ink-2)}
+
+.bonus{margin-top:16px;border:1px solid var(--line);border-radius:var(--r-md);background:var(--card)}
+.bonus summary{cursor:pointer;padding:12px 14px;font-weight:700;display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline}
+.bonus summary .muted{font-weight:400;font-size:13.5px}
+.bonus-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,230px),1fr));gap:6px 16px;padding:0 14px 6px}
+.brow{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:4px 0;border-bottom:1px solid var(--line-2);min-width:0}
+.brow span{overflow-wrap:anywhere;min-width:0}
+.stepper{display:inline-flex;align-items:center;gap:2px;flex:none}
+.stepper button{appearance:none;width:32px;height:32px;border-radius:8px;border:1px solid var(--line);background:var(--paper);color:var(--ink);font:inherit;font-weight:700;cursor:pointer}
+.stepper button:hover{border-color:var(--ink-2)}
+.stepper output{min-width:34px;text-align:center;font-family:var(--font-data);font-weight:700}
+.bonus .small{padding:4px 14px 14px;margin:0}
+
+.new-week{gap:18px}
+.nw-top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 16px}
+.inline-field{display:flex;align-items:center;gap:8px}
+.inline-field label{font-size:13px;font-weight:700;color:var(--ink-2)}
+.seg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.seg-btn{appearance:none;font:inherit;color:var(--ink);text-align:left;cursor:pointer;border:1px solid var(--line);background:var(--paper);border-radius:var(--r-md);padding:10px 12px;display:grid;gap:2px}
+.seg-btn b{font-size:15px}
+.seg-btn span{font-size:13px;color:var(--ink-2)}
+.seg-btn[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);box-shadow:inset 0 0 0 1px var(--accent)}
+.present-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:6px 12px}
+.present{display:flex;flex-wrap:wrap;gap:8px}
+.pchip{appearance:none;font:inherit;color:var(--ink);border:1px solid var(--line);background:var(--card);border-radius:999px;padding:4px 13px 4px 6px;display:inline-flex;gap:8px;align-items:center;cursor:pointer;max-width:100%}
+.pchip small{color:var(--ink-2);font-family:var(--font-data);font-size:11.5px}
+.pchip .box{width:18px;height:18px;border-radius:5px;border:2px solid var(--ink-2);display:grid;place-items:center;flex:none}
+.pchip[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.pchip[aria-pressed="true"] .box{background:var(--accent);border-color:var(--accent)}
+.pchip[aria-pressed="true"] .box::after{content:"";width:5px;height:9px;border:solid var(--accent-ink);border-width:0 2px 2px 0;transform:translateY(-1px) rotate(45deg)}
+.pchip[aria-pressed="false"]{color:var(--ink-2)}
+.pchip[aria-pressed="false"] .av{opacity:.5}
+.nw-go{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px}
+
+/* ---------- Standings ---------- */
+.table-card{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);overflow:hidden}
+.table-scroll{overflow-x:auto}
+table.st{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums;min-width:720px}
+table.st.has-award{min-width:860px}
+.st th{font-size:11.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-2);font-weight:700;text-align:left;padding:11px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+.st td{padding:8px 10px;border-bottom:1px solid var(--line-2);white-space:nowrap;vertical-align:middle}
+.st tbody tr:last-child td{border-bottom:0}
+.st .num{text-align:right;font-family:var(--font-data)}
+.st th.num{font-family:var(--font-body)}
+.st .wkcol{text-align:center;padding-inline:3px}
+.st th.wkgroup{text-align:center;border-left:1px solid var(--line-2)}
+.st td.wkfirst,.st th.wkfirst{border-left:1px solid var(--line-2);padding-left:10px}
+.st tr.is-dropped td{color:var(--ink-2)}
+.st tr.is-dropped .av{opacity:.6}
+.who{display:flex;align-items:center;gap:10px}
+.rank{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;font-family:var(--font-data);font-weight:700;font-size:13px;border:1px solid var(--line)}
+.rank.r1{background:var(--gold);color:var(--medal-ink);border-color:transparent}
+.rank.r2{background:var(--silver);color:var(--medal-ink);border-color:transparent}
+.rank.r3{background:var(--bronze);color:var(--medal-ink);border-color:transparent}
+.move{font-family:var(--font-data);font-size:12px;font-weight:700;width:34px}
+.move.up{color:var(--win)} .move.down{color:var(--danger)} .move.same{color:var(--ink-2)}
+.trainer-link{appearance:none;border:0;background:none;padding:0;font:inherit;font-weight:700;color:var(--ink);cursor:pointer;text-align:left}
+.trainer-link:hover{color:var(--accent);text-decoration:underline;text-underline-offset:3px}
+.sub{display:block;font-size:12px;color:var(--ink-2);font-weight:400}
+.pts{font-family:var(--font-display);font-weight:800;font-size:21px;line-height:1}
+.wk{display:inline-grid;place-items:center;min-width:32px;height:28px;border-radius:7px;font-family:var(--font-data);font-size:12.5px;font-weight:700;padding:0 5px;position:relative;font-style:normal}
+.wk sup{font-size:9.5px;margin-left:1px;top:-.45em}
+.wk-win{background:var(--win-soft);color:var(--win)}
+.wk-tie{background:var(--tie-soft);color:var(--tie)}
+.wk-loss{background:var(--line-2);color:var(--ink-2)}
+.wk-bye{background:var(--accent-soft);color:var(--accent)}
+.wk-pending{border:1px dashed var(--line);color:var(--ink-2)}
+.wk-absent{color:var(--ink-2);opacity:.6}
+.wk-extra{background:var(--accent-soft);color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent-line)}
+.award{display:inline-flex;gap:4px;align-items:center}
+.award button{appearance:none;font:inherit;font-family:var(--font-data);font-weight:700;font-size:13.5px;min-width:42px;height:34px;padding:0 8px;border-radius:8px;border:1px solid var(--accent-line);background:var(--accent-soft);color:var(--accent);cursor:pointer}
+.award button:hover{border-color:var(--accent)}
+.award button.minus{background:transparent;border-color:var(--line);color:var(--ink-2);min-width:36px}
+.award button.minus:hover{border-color:var(--ink-2);color:var(--ink)}
+.award-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:10px 14px;border-radius:var(--r-md);background:var(--paper)}
+.award-row .lbl{font-weight:700;font-size:14px;margin-right:auto}
+@keyframes bump{0%{transform:scale(1)}35%{transform:scale(1.4)}100%{transform:scale(1)}}
+.pts.bump,.pts-mini.bump{display:inline-block;animation:bump .45s ease-out;color:var(--accent)}
+.award-note{flex-basis:100%;font-size:13.5px;color:var(--ink-2);display:flex;align-items:center;gap:4px 8px;flex-wrap:wrap}
+.key{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;margin:12px 2px 0;font-size:13px;color:var(--ink-2)}
+.key span{display:inline-flex;align-items:center;gap:6px}
+.key .wk{min-width:24px;height:20px;font-size:11px}
+#panel-standings:fullscreen{background:var(--paper);padding:32px 40px;overflow:auto}
+#panel-standings:fullscreen .st{font-size:19px}
+#panel-standings:fullscreen .pts{font-size:28px}
+#panel-standings:fullscreen .panel-head h2{font-size:44px}
+
+/* ---------- Setup ---------- */
+.setup-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:16px;align-items:start}
+.points-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.points-grid .input{font-family:var(--font-data);font-weight:700;text-align:center}
+.rules{margin:0;padding-left:20px;display:grid;gap:6px;font-size:14px}
+.card hr{border:0;border-top:1px solid var(--line-2);margin:2px 0;width:100%}
+.card p{margin:0}
+.lock-card{max-width:520px}
+
+/* ---------- Dialogs ---------- */
+dialog.tcard{border:1px solid var(--line);padding:0;border-radius:var(--r-lg);background:var(--card);color:var(--ink);width:min(520px,calc(100vw - 32px));max-height:calc(100vh - 48px);box-shadow:var(--shadow);overflow:auto}
+dialog.tcard.wide{width:min(680px,calc(100vw - 32px))}
+dialog.tcard::backdrop{background:var(--backdrop)}
+.tc-foil{position:sticky;top:0;z-index:1;display:flex;justify-content:space-between;align-items:center;padding:10px 12px 10px 18px;color:var(--holo-ink);
+  background:repeating-linear-gradient(125deg,transparent 0 7px,var(--foil-line) 7px 8px),linear-gradient(118deg,var(--holo-1),var(--holo-2) 30%,var(--holo-3) 55%,var(--holo-4) 78%,var(--holo-5))}
+.tc-foil .icon-btn{color:var(--holo-ink)}
+.tc-foil .icon-btn:hover{background:var(--chip-on-holo);color:var(--holo-ink)}
+.tc-body{padding:18px;display:grid;gap:14px;margin:0}
+.tc-body h2{font-family:var(--font-display);font-size:26px;font-weight:800;margin:0;line-height:1.08;letter-spacing:-.02em;overflow-wrap:anywhere}
+.tc-body > p{margin:0}
+.tc-id{display:flex;gap:16px;align-items:center;min-width:0}
+.tc-id > div{display:grid;gap:2px;min-width:0}
+.tc-about{display:grid;gap:4px;padding:10px 14px;border-radius:var(--r-md);background:var(--paper)}
+.tc-about p{margin:0}
+.motto{font-style:italic}
+.tc-figs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:0}
+.tc-figs div{background:var(--paper);border-radius:var(--r-md);padding:8px 10px}
+.tc-figs dt{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-2);font-weight:700}
+.tc-figs dd{margin:0;font-family:var(--font-data);font-weight:700;font-size:17px}
+.tc-body h3{margin:0;font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-2)}
+.hist{list-style:none;margin:0;padding:0;display:grid;gap:4px}
+.hist li{display:grid;grid-template-columns:40px minmax(0,1fr) auto;gap:10px;align-items:center;padding:6px 0;border-bottom:1px solid var(--line-2)}
+.hist .h-wk{font-family:var(--font-data);font-weight:700;color:var(--ink-2);font-size:13px}
+.dlg-actions{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:8px}
+.pin-input{font-family:var(--font-data);font-size:24px;letter-spacing:.45em;text-align:center;max-width:220px;min-height:52px}
+.pin-row{display:grid;grid-template-columns:repeat(2,minmax(0,220px));gap:12px}
+.pin-box{display:grid;gap:10px;padding:14px;border-radius:var(--r-md);background:var(--paper)}
+.pin-box .input{background:var(--card)}
+.pin-box p{margin:0}
+.code{font-family:var(--font-data);font-size:30px;font-weight:700;letter-spacing:.12em;padding:16px;border-radius:var(--r-md);background:var(--paper);text-align:center;border:1px dashed var(--line);user-select:all;-webkit-user-select:all}
+
+.ed-av{display:grid;grid-template-columns:auto minmax(0,1fr);gap:18px;align-items:start}
+.ed-drop{border-radius:50%;padding:4px;border:2px dashed transparent;display:grid;place-items:center}
+.ed-drop.is-over{border-color:var(--accent);background:var(--accent-soft)}
+.ed-av-controls{display:grid;gap:10px;min-width:0}
+.seg2{display:inline-flex;border:1px solid var(--line);border-radius:10px;padding:3px;gap:3px;background:var(--paper);justify-self:start}
+.seg2 button{appearance:none;border:0;background:transparent;font:inherit;font-weight:700;font-size:13.5px;color:var(--ink-2);padding:6px 12px;border-radius:7px;cursor:pointer}
+.seg2 button[aria-pressed="true"]{background:var(--card);color:var(--ink);box-shadow:inset 0 0 0 1px var(--line)}
+.types{display:flex;flex-wrap:wrap;gap:6px}
+.type-sw{appearance:none;width:40px;height:40px;border-radius:50%;border:2px solid transparent;padding:2px;cursor:pointer;background:none;display:grid;place-items:center}
+.type-sw .av svg{opacity:.9;width:58%;height:58%}
+.type-sw:hover{border-color:var(--line)}
+.type-sw[aria-pressed="true"]{border-color:var(--ink)}
+.ed-badge-row{display:flex;flex-wrap:wrap;align-items:end;gap:10px}
+.ed-badge-row .field{width:120px}
+.ed-badge-row .input{font-family:var(--font-display);font-weight:800;text-transform:uppercase;letter-spacing:.06em}
+.ed-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+
+.toast{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translate(-50%,12px);opacity:0;pointer-events:none;
+  background:var(--ink);color:var(--paper);padding:10px 16px;border-radius:12px;font-weight:700;font-size:14px;transition:opacity .2s,transform .2s;
+  max-width:calc(100vw - 32px);z-index:20;box-shadow:var(--shadow)}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.toast.has-action{display:flex;align-items:center;gap:14px}
+.toast.show.has-action{pointer-events:auto}
+.toast-btn{appearance:none;border:1px solid currentColor;background:transparent;color:inherit;font:inherit;font-weight:700;border-radius:8px;padding:4px 12px;cursor:pointer;flex:none}
+.foot{padding-block:0 32px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 16px;font-size:13px;color:var(--ink-2)}
+.save-state{display:inline-flex;align-items:center;gap:8px}
+.save-state .dot{background:var(--win)}
+.save-state.is-off .dot{background:var(--danger)}
+
+#print-sheet{display:none}
+
+@media (max-width:640px){
+  .slip{grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-areas:"no tie" "a b"}
+  .tno{display:flex;justify-content:flex-start;align-items:baseline;gap:6px;padding-left:4px;font-size:16px}
+  .tno small{margin:0}
+  .tie-btn{justify-self:end;flex-direction:row;gap:8px;min-height:34px;padding:4px 14px}
+  .pl{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"av tag" "name name" "meta meta";row-gap:4px;padding:9px 10px}
+  .pl-b{grid-template-columns:auto minmax(0,1fr);grid-template-areas:"tag av" "name name" "meta meta"}
+  .pl-b .av{justify-self:end}
+  .pl .av{--s:32px!important}
+  .slip.bye{grid-template-columns:minmax(0,1fr);grid-template-areas:"no" "a"}
+  .slip.editing{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"no x" "a a" "b b"}
+  .slip.editing .vs-txt{display:none}
+  .seg{grid-template-columns:minmax(0,1fr)}
+  .points-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .tc-figs{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .field-row,.ed-grid,.pin-row{grid-template-columns:minmax(0,1fr)}
+  .ed-av{grid-template-columns:minmax(0,1fr);justify-items:start}
+  .panel-head h2{font-size:26px}
+  .mode-btn span{display:none}
+  .mode-btn{padding:8px}
+  .tc-id .av{--s:64px!important}
+}
+@media (prefers-reduced-motion: reduce){
+  .title-card::after{animation:none;opacity:0}
+  .toast{transition:none}
+  .pts.bump,.pts-mini.bump{animation:none}
+}
+@media print{
+  body{background:#fff;color:#000;padding:0}
+  body > *:not(#print-sheet){display:none!important}
+  body::before{display:none}
+  #print-sheet{display:block;font-family:var(--font-body);color:#000}
+  #print-sheet h1{font-family:var(--font-display);font-size:24pt;margin:0 0 2pt}
+  #print-sheet h2{font-size:14pt;margin:0 0 14pt;font-weight:700}
+  #print-sheet table{width:100%;border-collapse:collapse;font-size:13pt}
+  #print-sheet th,#print-sheet td{border:1px solid #999;padding:8pt 8pt;text-align:left}
+  #print-sheet th{background:#eee;font-size:10pt;text-transform:uppercase;letter-spacing:.06em}
+  #print-sheet td.t{font-family:var(--font-data);font-weight:700;text-align:center;width:52pt}
+  #print-sheet td.vs{text-align:center;width:28pt;color:#555}
+  #print-sheet td.box{width:120pt}
+  #print-sheet td.r{text-align:right;font-family:var(--font-data)}
+  #print-sheet p{font-size:10.5pt;color:#333;margin-top:12pt}
+}
+</style>
+</head>
+<body>
+<div class="page" id="page">
+  <header class="wrap top">
+    <div class="title-card" id="title-card"></div>
+    <div class="notices" id="notices"></div>
+  </header>
+
+  <nav class="tabs-bar" aria-label="Sections">
+    <div class="wrap bar-row">
+      <div class="tabs" role="tablist" id="tabs">
+        <button type="button" class="tab" role="tab" id="tab-trainers" data-action="tab" data-tab="trainers" aria-controls="panel-trainers">Trainers <span class="count" id="count-trainers">0</span></button>
+        <button type="button" class="tab" role="tab" id="tab-fixtures" data-action="tab" data-tab="fixtures" aria-controls="panel-fixtures">Fixtures <span class="count" id="count-fixtures">0</span></button>
+        <button type="button" class="tab" role="tab" id="tab-standings" data-action="tab" data-tab="standings" aria-controls="panel-standings">Standings</button>
+        <button type="button" class="tab" role="tab" id="tab-setup" data-action="tab" data-tab="setup" aria-controls="panel-setup">Setup</button>
+      </div>
+      <div id="mode-slot"></div>
+    </div>
+  </nav>
+
+  <main class="wrap main">
+    <section id="panel-trainers" role="tabpanel" aria-labelledby="tab-trainers" hidden></section>
+    <section id="panel-fixtures" role="tabpanel" aria-labelledby="tab-fixtures" hidden></section>
+    <section id="panel-standings" role="tabpanel" aria-labelledby="tab-standings" hidden></section>
+    <section id="panel-setup" role="tabpanel" aria-labelledby="tab-setup" hidden></section>
+  </main>
+
+  <footer class="wrap foot">
+    <span class="save-state" id="save-state"><span class="dot"></span><span id="save-text">Saves automatically in this browser</span></span>
+    <span>Scoring (3 for a win, 1 for a tie) and Swiss pairings follow the format used at official Pokémon events.</span>
+  </footer>
+</div>
+
+<dialog class="tcard" id="dlg" aria-labelledby="dlg-title"></dialog>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div id="print-sheet"></div>
+<noscript><p style="padding:16px">This page needs JavaScript switched on to run the tournament.</p></noscript>
+
+<script>
+(function () {
+  'use strict';
+
+  var STORE_KEY = 'pokemon-tournament-desk:v1';
+  var UI_KEY = 'pokemon-tournament-desk:ui';
+  var TABS = ['trainers', 'fixtures', 'standings', 'setup'];
+  var MAX_FAILS = 5;
+
+  /* Badge types: [key, label, glyph path (24x24), dark lettering] */
+  var TYPES = [
+    ['fire', 'Fire', 'M12 2c.6 3.4 3 5.2 4.6 7.4 1.4 1.9 2.4 3.6 2.4 5.8 0 3.8-3.1 6.8-7 6.8s-7-3-7-6.8c0-2.6 1.4-4.6 3-6 .2 1.9 1 3.1 2.3 3.6C9.9 9 10.6 5.3 12 2z'],
+    ['water', 'Water', 'M12 2.5C9.2 6.6 5.5 10.6 5.5 14.6a6.5 6.5 0 0 0 13 0c0-4-3.7-8-6.5-12.1z'],
+    ['grass', 'Grass', 'M4.5 19.5C4.5 10.4 10.3 4.5 20 4.5c0 9.6-5.9 15-15.5 15zM7 18.6l9.6-10.4-.9-.8L6.2 17.8z'],
+    ['lightning', 'Lightning', 'M13.5 2 4.5 13.5h6.2L9.5 22l10-12.2h-6.3L13.5 2z', true],
+    ['psychic', 'Psychic', 'M12 2.5a9.5 9.5 0 1 0 0 19 9.5 9.5 0 0 0 0-19zM12 6a6 6 0 1 1 0 12 6 6 0 0 1 0-12zM12 9.2a2.8 2.8 0 1 0 0 5.6 2.8 2.8 0 0 0 0-5.6z'],
+    ['fighting', 'Fighting', 'M12 1.5l2.6 5.7 6-1.8-3.2 5.5 5.1 3.7-6.2 1 .1 6.3L12 17.4l-4.4 4.5.1-6.3-6.2-1 5.1-3.7-3.2-5.5 6 1.8z'],
+    ['darkness', 'Darkness', 'M20.5 14.5A8.5 8.5 0 1 1 9.5 3.5a7 7 0 0 0 11 11z'],
+    ['metal', 'Metal', 'M12 2l8.7 5v10L12 22l-8.7-5V7zM12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7z'],
+    ['dragon', 'Dragon', 'M6.5 3h3L6 21H3zM12 3h3l-3.5 18h-3zM17.5 3h3L17 21h-3z'],
+    ['fairy', 'Fairy', 'M12 1.5l2.6 7.9 7.9 2.6-7.9 2.6L12 22.5l-2.6-7.9L1.5 12l7.9-2.6z'],
+    ['colourless', 'Colourless', 'M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7L12 17.3l-6.2 3.6 1.6-7L2 9.2l7.1-.6z', true]
+  ];
+  var TYPE_MAP = {};
+  TYPES.forEach(function (t) { TYPE_MAP[t[0]] = { key: t[0], label: t[1], path: t[2] }; });
+
+  var ICON_LOCK = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>';
+  var ICON_UNLOCK = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 7.7-1.5"/></svg>';
+
+  /* ---------------- helpers ---------------- */
+  function $(sel, root) { return (root || document).querySelector(sel); }
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+  function uid() { return Math.random().toString(36).slice(2, 9) + Date.now().toString(36).slice(-4); }
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+  function todayISO() { var d = new Date(); return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
+  function fmtDate(iso, long) {
+    if (!iso) return '';
+    var d = new Date(iso + 'T12:00:00');
+    if (isNaN(d)) return '';
+    return d.toLocaleDateString('en-GB', long ? { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' } : { day: 'numeric', month: 'short' });
+  }
+  function avg(arr) { return arr.length ? arr.reduce(function (a, b) { return a + b; }, 0) / arr.length : 0; }
+  function pk(a, b) { return a < b ? a + '|' + b : b + '|' + a; }
+  function byName(a, b) { return a.name.localeCompare(b.name, 'en', { sensitivity: 'base' }); }
+  function plural(n, one, many) { return n + ' ' + (n === 1 ? one : (many || one + 's')); }
+  function str(v, max) { return String(v == null ? '' : v).trim().replace(/\s+/g, ' ').slice(0, max); }
+  function mulberry32(a) {
+    return function () {
+      a |= 0; a = a + 0x6D2B79F5 | 0;
+      var t = Math.imul(a ^ a >>> 15, 1 | a);
+      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+  function shuffle(arr, rng) {
+    for (var i = arr.length - 1; i > 0; i--) { var j = Math.floor(rng() * (i + 1)); var t = arr[i]; arr[i] = arr[j]; arr[j] = t; }
+    return arr;
+  }
+  function randomInts(n) {
+    var out = new Uint32Array(n);
+    try { (window.crypto || window.msCrypto).getRandomValues(out); }
+    catch (e) { for (var i = 0; i < n; i++) out[i] = Math.floor(Math.random() * 4294967296); }
+    return out;
+  }
+  function randomSalt() { return Array.prototype.map.call(randomInts(4), function (x) { return x.toString(36); }).join(''); }
+  function randomCode() {
+    var A = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789', r = randomInts(8), s = '';
+    for (var i = 0; i < 8; i++) s += A[r[i] % A.length];
+    return s.slice(0, 4) + '-' + s.slice(4);
+  }
+  function normCode(c) { return String(c || '').toUpperCase().replace(/[^A-Z0-9]/g, ''); }
+  function cyrb53(s, seed) {
+    var h1 = 0xdeadbeef ^ seed, h2 = 0x41c6ce57 ^ seed;
+    for (var i = 0, ch; i < s.length; i++) {
+      ch = s.charCodeAt(i);
+      h1 = Math.imul(h1 ^ ch, 2654435761);
+      h2 = Math.imul(h2 ^ ch, 1597334677);
+    }
+    h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507); h1 ^= Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+    h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507); h2 ^= Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+    return 4294967296 * (2097151 & h2) + (h1 >>> 0);
+  }
+  /* PINs are stored as salted hashes, never as the digits themselves. */
+  function hashWith(salt, who, secret) {
+    var s = salt + ':' + who + ':' + secret, h = '';
+    for (var i = 0; i < 400; i++) h = cyrb53(s + h, i).toString(36);
+    return h;
+  }
+  function initials(name) {
+    var w = String(name || '').trim().split(/\s+/).filter(Boolean);
+    if (!w.length) return '?';
+    var first = Array.from(w[0]);
+    var s = w.length > 1 ? first[0] + Array.from(w[w.length - 1])[0] : first.slice(0, 2).join('');
+    return s.toUpperCase();
+  }
+  function defaultTypeFor(t) {
+    var deck = String((t && t.deck) || '').toLowerCase();
+    for (var i = 0; i < TYPES.length; i++) {
+      if (deck.indexOf(TYPES[i][0]) >= 0 || deck.indexOf(TYPES[i][1].toLowerCase()) >= 0) return TYPES[i][0];
+    }
+    if (deck.indexOf('colorless') >= 0 || deck.indexOf('normal') >= 0) return 'colourless';
+    var h = cyrb53(String((t && t.name) || ''), 7);
+    return TYPES[h % (TYPES.length - 1)][0];
+  }
+  function cleanBadgeText(v) { return Array.from(String(v || '').replace(/[^\p{L}\p{N}]/gu, '').toUpperCase()).slice(0, 3).join(''); }
+  var PHOTO_RE = /^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/;
+  function cleanAvatar(a) {
+    if (!a || typeof a !== 'object') return null;
+    if (a.kind === 'photo' && typeof a.src === 'string' && a.src.length < 600000 && PHOTO_RE.test(a.src)) return { kind: 'photo', src: a.src };
+    if (a.kind === 'badge' && TYPE_MAP[a.type]) return { kind: 'badge', type: a.type, text: cleanBadgeText(a.text) };
+    return null;
+  }
+
+  /* ---------------- state ---------------- */
+  function defaultSettings() {
+    return { name: 'Pokémon League', game: 'Pokémon TCG', format: 'Best of 3', pairing: 'swiss', weeksPlanned: 6,
+             points: { win: 3, tie: 1, loss: 0, bye: 3 }, allowSignup: true, allowPhotos: true, lockMinutes: 10 };
+  }
+  function newSecurity() { return { salt: randomSalt(), teacherHash: null, recoveryHash: null }; }
+  function emptyState(settings, security) {
+    return { v: 2, example: false, settings: settings || defaultSettings(), security: security || newSecurity(), trainers: [], weeks: [], extra: {} };
+  }
+  function normalize(s) {
+    if (!s || typeof s !== 'object') return emptyState();
+    var defs = defaultSettings();
+    var settings = Object.assign(defs, s.settings || {});
+    settings.points = Object.assign(defaultSettings().points, (s.settings && s.settings.points) || {});
+    if (settings.name === 'Lunchtime Pokémon League') settings.name = 'Pokémon League';
+    settings.allowSignup = settings.allowSignup !== false;
+    settings.allowPhotos = settings.allowPhotos !== false;
+    settings.lockMinutes = [5, 10, 20, 30].indexOf(Number(settings.lockMinutes)) >= 0 ? Number(settings.lockMinutes) : 10;
+    var sec = s.security && typeof s.security === 'object' ? s.security : {};
+    var st = {
+      v: 2,
+      example: !!s.example,
+      settings: settings,
+      security: {
+        salt: typeof sec.salt === 'string' && sec.salt ? sec.salt : randomSalt(),
+        teacherHash: typeof sec.teacherHash === 'string' ? sec.teacherHash : null,
+        recoveryHash: typeof sec.recoveryHash === 'string' ? sec.recoveryHash : null
+      },
+      trainers: (Array.isArray(s.trainers) ? s.trainers : []).filter(function (t) { return t && t.id && t.name; }).map(function (t) {
+        return {
+          id: String(t.id), name: str(t.name, 40), cls: str(t.cls, 12), deck: str(t.deck, 30), active: t.active !== false,
+          nick: str(t.nick, 24), fav: str(t.fav, 30), motto: str(t.motto, 60), avatar: cleanAvatar(t.avatar),
+          pinHash: typeof t.pinHash === 'string' && t.pinHash ? t.pinHash : null
+        };
+      }),
+      weeks: []
+    };
+    var ids = new Set(st.trainers.map(function (t) { return t.id; }));
+    st.weeks = (Array.isArray(s.weeks) ? s.weeks : []).filter(function (w) { return w && Array.isArray(w.matches); }).map(function (w) {
+      var bonus = {};
+      Object.keys(w.bonus || {}).forEach(function (k) { var n = Number(w.bonus[k]) || 0; if (ids.has(k) && n) bonus[k] = n; });
+      return {
+        id: String(w.id || uid()), date: typeof w.date === 'string' ? w.date : '',
+        matches: w.matches.filter(function (m) { return m && ids.has(m.a) && (!m.b || ids.has(m.b)); }).map(function (m) {
+          var b = m.b || null;
+          var r = b ? (['a', 'b', 'tie'].indexOf(m.result) >= 0 ? m.result : null) : 'bye';
+          return { id: String(m.id || uid()), table: m.table || null, a: m.a, b: b, result: r };
+        }),
+        bonus: bonus
+      };
+    });
+    st.weeks.forEach(renumber);
+    st.extra = {};
+    Object.keys(s.extra || {}).forEach(function (k) { var n = Math.round(Number(s.extra[k]) || 0); if (ids.has(k) && n) st.extra[k] = n; });
+    return st;
+  }
+
+  var storageOK = true;
+  var lastSaved = null;
+  function loadStored() {
+    try {
+      var raw = localStorage.getItem(STORE_KEY);
+      if (raw) return normalize(JSON.parse(raw));
+    } catch (e) { storageOK = false; }
+    return null;
+  }
+  function commit() {
+    try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); storageOK = true; lastSaved = new Date(); }
+    catch (e) { storageOK = false; }
+    renderSaveState();
+    return storageOK;
+  }
+  function loadUI() { try { return JSON.parse(localStorage.getItem(UI_KEY) || '{}') || {}; } catch (e) { return {}; } }
+  function saveUI() { try { localStorage.setItem(UI_KEY, JSON.stringify({ tab: ui.tab, hideDropped: ui.hideDropped, bonusOpen: ui.bonusOpen })); } catch (e) { /* not available */ } }
+
+  /* ---------------- tournament logic ---------------- */
+  function renumber(wk) {
+    wk.matches.sort(function (x, y) { return (x.b ? 0 : 1) - (y.b ? 0 : 1); });
+    var n = 1;
+    wk.matches.forEach(function (m) { m.table = m.b ? n++ : null; });
+  }
+  function weekStatus(wk) {
+    var real = wk.matches.filter(function (m) { return m.b; });
+    var done = real.filter(function (m) { return m.result; }).length;
+    return { done: done, total: real.length, state: real.length === 0 ? 'done' : done === real.length ? 'done' : done > 0 ? 'part' : 'new' };
+  }
+
+  function computeStandings(st, opts) {
+    opts = opts || {};
+    var P = st.settings.points;
+    var byId = new Map();
+    st.trainers.forEach(function (t) {
+      byId.set(t.id, { id: t.id, t: t, w: 0, l: 0, d: 0, byes: 0, played: 0, mp: 0, bonus: 0, total: 0, opps: [], weekly: {}, wp: 0, owp: 0, oowp: 0 });
+    });
+    st.weeks.forEach(function (wk, wi) {
+      if (opts.excludeWeekId && wk.id === opts.excludeWeekId) return;
+      if (opts.upto != null && wi > opts.upto) return;
+      function cell(r) { return r.weekly[wk.id] || (r.weekly[wk.id] = { kind: 'pending', pts: 0, bonus: 0 }); }
+      wk.matches.forEach(function (m) {
+        var A = byId.get(m.a), B = m.b ? byId.get(m.b) : null;
+        if (!A) return;
+        if (!m.b) { A.byes++; A.mp += P.bye; var c = cell(A); c.kind = 'bye'; c.pts += P.bye; return; }
+        if (!B) return;
+        if (!m.result) { cell(A); cell(B); return; }
+        A.played++; B.played++; A.opps.push(B.id); B.opps.push(A.id);
+        if (m.result === 'tie') {
+          A.d++; B.d++; A.mp += P.tie; B.mp += P.tie;
+          var ca = cell(A), cb = cell(B); ca.kind = 'tie'; cb.kind = 'tie'; ca.pts += P.tie; cb.pts += P.tie;
+        } else {
+          var W = m.result === 'a' ? A : B, L = m.result === 'a' ? B : A;
+          W.w++; L.l++; W.mp += P.win; L.mp += P.loss;
+          var cw = cell(W), cl = cell(L); cw.kind = 'win'; cl.kind = 'loss'; cw.pts += P.win; cl.pts += P.loss;
+        }
+      });
+      Object.keys(wk.bonus || {}).forEach(function (id) {
+        var r = byId.get(id), n = Number(wk.bonus[id]) || 0;
+        if (!r || !n) return;
+        r.bonus += n;
+        if (!r.weekly[wk.id]) r.weekly[wk.id] = { kind: 'none', pts: 0, bonus: 0 };
+        r.weekly[wk.id].bonus += n;
+      });
+    });
+    Object.keys(st.extra || {}).forEach(function (id) {
+      var r = byId.get(id), n = Number(st.extra[id]) || 0;
+      if (r && n) r.bonus += n;
+    });
+    var rows = Array.from(byId.values());
+    rows.forEach(function (r) {
+      r.total = r.mp + r.bonus;
+      r.wp = r.played ? Math.max(0.25, (r.w * 3 + r.d) / (r.played * 3)) : 0.25;
+    });
+    rows.forEach(function (r) {
+      var o = r.opps.map(function (id) { return byId.get(id); }).filter(Boolean);
+      r.owp = o.length ? avg(o.map(function (x) { return x.wp; })) : 0;
+    });
+    rows.forEach(function (r) {
+      var o = r.opps.map(function (id) { return byId.get(id); }).filter(Boolean);
+      r.oowp = o.length ? avg(o.map(function (x) { return x.owp; })) : 0;
+    });
+    rows.sort(function (a, b) {
+      return (b.total - a.total) || (b.owp - a.owp) || (b.oowp - a.oowp) || ((b.w + b.byes) - (a.w + a.byes)) || byName(a.t, b.t);
+    });
+    return { rows: rows, byId: byId };
+  }
+
+  /* Swiss: sort by points (random within a points group), give the bye to the lowest-ranked
+     trainer without one, then pair from the top avoiding rematches (with backtracking). */
+  function makePairings(st, presentIds, method, rng, excludeWeekId) {
+    rng = rng || Math.random;
+    var stand = computeStandings(st, { excludeWeekId: excludeWeekId });
+    var played = new Set(), hadBye = new Set();
+    st.weeks.forEach(function (wk) {
+      if (excludeWeekId && wk.id === excludeWeekId) return;
+      wk.matches.forEach(function (m) { if (m.b) played.add(pk(m.a, m.b)); else hadBye.add(m.a); });
+    });
+    var order = shuffle(presentIds.slice(), rng);
+    function pts(id) { var r = stand.byId.get(id); return r ? r.total : 0; }
+    if (method === 'swiss') order.sort(function (x, y) { return pts(y) - pts(x); });
+    var bye = null;
+    if (order.length % 2 === 1) {
+      for (var i = order.length - 1; i >= 0; i--) { if (!hadBye.has(order[i])) { bye = order[i]; break; } }
+      if (bye == null) bye = order[order.length - 1];
+      order = order.filter(function (id) { return id !== bye; });
+    }
+    var steps = 0;
+    function solve(list) {
+      if (!list.length) return [];
+      if (++steps > 200000) return null;
+      var p = list[0];
+      for (var k = 1; k < list.length; k++) {
+        var q = list[k];
+        if (played.has(pk(p, q))) continue;
+        var sub = solve(list.slice(1, k).concat(list.slice(k + 1)));
+        if (sub) { sub.unshift([p, q]); return sub; }
+      }
+      return null;
+    }
+    var pairs = solve(order), rematch = false;
+    if (!pairs) {
+      rematch = true; pairs = [];
+      for (var j = 0; j < order.length; j += 2) pairs.push([order[j], order[j + 1]]);
+    }
+    var matches = pairs.map(function (pq, n) { return { id: uid(), table: n + 1, a: pq[0], b: pq[1], result: null }; });
+    if (bye) matches.push({ id: uid(), table: null, a: bye, b: null, result: 'bye' });
+    return { matches: matches, rematch: rematch, bye: bye };
+  }
+
+  function exampleState() {
+    var s = emptyState();
+    s.example = true;
+    s.security.teacherHash = hashWith(s.security.salt, 'teacher', '1234');
+    var people = [
+      ['Aisha Khan', '7A', 'Psychic', 'Mind Reader', 'Gardevoir', 'Think three turns ahead.'],
+      ['Omar Haddad', '7B', 'Fire', 'Blaze', 'Charizard', 'Turn up the heat!'],
+      ['Priya Nair', '8C', 'Water', '', 'Lapras', ''],
+      ['Leo Martins', '7A', 'Lightning', 'Sparky', 'Pikachu', 'Fast and fearless.'],
+      ['Fatima Al Mansoori', '8C', 'Grass', 'Fern', 'Leafeon', ''],
+      ['Zayd Hussain', '9B', 'Darkness', 'Nightshade', 'Umbreon', 'Never give up a prize card.'],
+      ['Mia Thompson', '7B', 'Fighting', '', 'Lucario', ''],
+      ['Arjun Patel', '8A', 'Metal', 'Iron Will', 'Metagross', 'Steel never bends.'],
+      ['Sofia Rossi', '9B', 'Dragon', '', 'Dragonite', ''],
+      ['Yusuf Nasser', '7A', 'Water', 'Tidal', 'Vaporeon', 'Go with the flow.'],
+      ['Hana Begum', '8A', 'Fire', '', 'Arcanine', ''],
+      ['Ethan Clarke', '9A', 'Grass', '', 'Sceptile', '']
+    ];
+    s.trainers = people.map(function (p) {
+      var id = uid();
+      return { id: id, name: p[0], cls: p[1], deck: p[2], active: true, nick: p[3], fav: p[4], motto: p[5],
+               avatar: { kind: 'badge', type: p[2].toLowerCase(), text: '' }, pinHash: hashWith(s.security.salt, id, '1111') };
+    });
+    var rng = mulberry32(20261105);
+    var dates = ['2026-10-15', '2026-10-22', '2026-10-29', '2026-11-05'];
+    var absent = [[], [8], [], [11]];
+    for (var wk = 0; wk < 4; wk++) {
+      var present = s.trainers.filter(function (t, i) { return absent[wk].indexOf(i) < 0; }).map(function (t) { return t.id; });
+      var res = makePairings(s, present, 'swiss', rng);
+      var week = { id: uid(), date: dates[wk], matches: res.matches, bonus: {} };
+      var real = week.matches.filter(function (m) { return m.b; });
+      real.forEach(function (m, i) {
+        if (wk < 3 || i < 2) { var r = rng(); m.result = r < 0.46 ? 'a' : r < 0.92 ? 'b' : 'tie'; }
+      });
+      s.weeks.push(week);
+    }
+    s.weeks[0].bonus[s.trainers[3].id] = 1;
+    s.weeks[2].bonus[s.trainers[10].id] = 1;
+    return s;
+  }
+
+  /* ---------------- app state ---------------- */
+  var stored = loadStored();
+  if (stored && stored.example && !stored.security.teacherHash) stored = null; // older example: refresh it
+  var state = stored || exampleState();
+  var savedUI = loadUI();
+  var ui = {
+    tab: null, week: null, editWeek: null, present: null, newMethod: null, newDate: null,
+    confirm: null, confirmTimer: null, hideDropped: !!savedUI.hideDropped, bonusOpen: !!savedUI.bonusOpen,
+    teacher: false, lastActive: 0, fails: {}, dialog: null, draft: null, bulkOpen: false, flash: null, undo: null
+  };
+
+  function hasTeacherPin() { return !!state.security.teacherHash; }
+  function canTeach() { return ui.teacher || !hasTeacherPin(); }
+  function trainer(id) { for (var i = 0; i < state.trainers.length; i++) if (state.trainers[i].id === id) return state.trainers[i]; return null; }
+  function tName(id) { var t = trainer(id); return t ? t.name : 'Unknown trainer'; }
+  function findMatch(id) {
+    for (var i = 0; i < state.weeks.length; i++) {
+      var w = state.weeks[i];
+      for (var j = 0; j < w.matches.length; j++) if (w.matches[j].id === id) return { week: w, match: w.matches[j] };
+    }
+    return null;
+  }
+  function weekById(id) { return state.weeks.filter(function (w) { return w.id === id; })[0] || null; }
+  function activeTrainers() { return state.trainers.filter(function (t) { return t.active; }).sort(byName); }
+  function inAnyMatch() {
+    var s = new Set();
+    state.weeks.forEach(function (w) { w.matches.forEach(function (m) { s.add(m.a); if (m.b) s.add(m.b); }); });
+    return s;
+  }
+  function lastResultWeekIndex() {
+    var idx = -1;
+    state.weeks.forEach(function (w, i) { if (w.matches.some(function (m) { return m.b && m.result; })) idx = i; });
+    return idx;
+  }
+
+  function askConfirm(key) {
+    if (ui.confirm === key) { clearTimeout(ui.confirmTimer); ui.confirm = null; return true; }
+    ui.confirm = key;
+    clearTimeout(ui.confirmTimer);
+    ui.confirmTimer = setTimeout(function () { ui.confirm = null; render(); }, 5000);
+    render();
+    return false;
+  }
+
+  /* ---------------- avatars ---------------- */
+  function avatarHTML(t, size) {
+    var a = t && t.avatar;
+    var st = ' style="--s:' + size + 'px"';
+    if (a && a.kind === 'photo' && a.src && state.settings.allowPhotos) {
+      return '<span class="av"' + st + ' aria-hidden="true"><img src="' + esc(a.src) + '" alt=""></span>';
+    }
+    var key = a && a.kind === 'badge' && TYPE_MAP[a.type] ? a.type : defaultTypeFor(t);
+    var text = a && a.kind === 'badge' && a.text ? a.text : initials(t && t.name);
+    return '<span class="av av-badge ty-' + key + '"' + st + ' aria-hidden="true"><svg viewBox="0 0 24 24"><path fill-rule="evenodd" d="' + TYPE_MAP[key].path + '"/></svg>' +
+      '<b' + (Array.from(text).length > 2 ? ' class="t3"' : '') + '>' + esc(text) + '</b></span>';
+  }
+  function loadAvatarFile(file, cb) {
+    if (!file) return;
+    var okType = /^image\//.test(file.type || '') || /\.(jpe?g|png|gif|webp|bmp|heic|heif)$/i.test(file.name || '');
+    if (!okType) { cb(null, 'Choose a picture file, such as a JPG or PNG.'); return; }
+    if (file.size > 20 * 1024 * 1024) { cb(null, 'That picture is over 20 MB. Choose a smaller one.'); return; }
+    var url = URL.createObjectURL(file);
+    var img = new Image();
+    img.onload = function () {
+      try {
+        var S = 200, c = document.createElement('canvas');
+        c.width = c.height = S;
+        var g = c.getContext('2d');
+        var w = img.naturalWidth, h = img.naturalHeight, side = Math.min(w, h);
+        g.fillStyle = '#ffffff'; g.fillRect(0, 0, S, S);
+        g.imageSmoothingEnabled = true; g.imageSmoothingQuality = 'high';
+        g.drawImage(img, (w - side) / 2, (h - side) / 2, side, side, 0, 0, S, S);
+        cb(c.toDataURL('image/jpeg', 0.82));
+      } catch (e) { cb(null, 'That picture couldn\'t be used. Try a different one.'); }
+      URL.revokeObjectURL(url);
+    };
+    img.onerror = function () { URL.revokeObjectURL(url); cb(null, 'That picture couldn\'t be opened. Try a JPG or PNG.'); };
+    img.src = url;
+  }
+
+  /* ---------------- PIN checks ---------------- */
+  function lockedMsg(key) {
+    var f = ui.fails[key];
+    if (f && f.until > Date.now()) return 'Too many wrong tries. Try again in ' + Math.ceil((f.until - Date.now()) / 1000) + ' seconds.';
+    return null;
+  }
+  function failMsg(key) {
+    var f = ui.fails[key] || (ui.fails[key] = { n: 0, until: 0 });
+    f.n++;
+    if (f.n >= MAX_FAILS) { f.n = 0; f.until = Date.now() + 60000; return 'Too many wrong tries. Wait a minute, then try again.'; }
+    return 'That PIN isn\'t right. ' + plural(MAX_FAILS - f.n, 'try', 'tries') + ' left.';
+  }
+  function clearFails(key) { delete ui.fails[key]; }
+  function setTeacherPin(sec, pin) {
+    sec.teacherHash = hashWith(sec.salt, 'teacher', pin);
+    var code = randomCode();
+    sec.recoveryHash = hashWith(sec.salt, 'recovery', normCode(code));
+    return code;
+  }
+
+  /* ---------------- rendering ---------------- */
+  function withFocus(fn) {
+    var a = document.activeElement;
+    var fk = a && a.getAttribute && !$('#dlg').contains(a) ? a.getAttribute('data-fk') : null;
+    fn();
+    if (fk && !ui.dialog) {
+      var el = document.querySelector('main [data-fk="' + fk + '"], header [data-fk="' + fk + '"], nav [data-fk="' + fk + '"]');
+      if (el && el !== document.activeElement) { try { el.focus({ preventScroll: true }); } catch (e) { el.focus(); } }
+    }
+  }
+  function render() {
+    withFocus(function () { renderHeader(); renderNotices(); renderTabs(); renderPanel(ui.tab); });
+  }
+  function renderPanel(t) {
+    if (t === 'trainers') renderTrainers();
+    else if (t === 'fixtures') renderFixtures();
+    else if (t === 'standings') renderStandings();
+    else renderSetup();
+  }
+
+  function renderHeader() {
+    var s = state.settings, n = state.weeks.length, planned = Number(s.weeksPlanned) || 0;
+    var weekLabel = n === 0 ? 'Not started' : (planned && n <= planned ? 'Week ' + n + ' of ' + planned : 'Week ' + n);
+    var fmt = [s.game, s.pairing === 'swiss' ? 'Swiss pairings' : 'Random pairings', s.format].filter(Boolean).join(' · ');
+    var all = 0, done = 0;
+    state.weeks.forEach(function (w) { w.matches.forEach(function (m) { if (m.b) { all++; if (m.result) done++; } }); });
+    var stand = computeStandings(state);
+    var leader = stand.rows[0] && stand.rows[0].total > 0 ? stand.rows[0] : null;
+    var active = state.trainers.filter(function (t) { return t.active; }).length;
+    $('#title-card').innerHTML =
+      '<div class="tc-row"><span class="eyebrow">' + esc(fmt) + '</span><span class="season">' + esc(weekLabel) + '</span></div>' +
+      '<h1 class="tc-name">' + esc(s.name || 'Pokémon League') + '</h1>' +
+      '<dl class="tc-stats">' +
+        '<div><dt>Trainers</dt><dd>' + active + '</dd></div>' +
+        '<div><dt>Results in</dt><dd>' + done + ' / ' + all + '</dd></div>' +
+        '<div><dt>Top of the table</dt><dd class="leader">' + (leader ? avatarHTML(leader.t, 22) + '<span>' + esc(leader.t.name) + ' · ' + leader.total + ' pts</span>' : 'No results yet') + '</dd></div>' +
+      '</dl>';
+    document.title = (s.name ? s.name + ' · ' : '') + 'Pokémon Tournament Desk';
+  }
+
+  function renderNotices() {
+    var html = '';
+    if (state.example) {
+      html += '<div class="notice"><p><b>This is an example league</b> with made-up trainers. The teacher PIN is 1234 and every example trainer\'s PIN is 1111. ' +
+        'Try tapping a trainer card to edit a profile, or unlock teacher mode to enter a result in Week 4.</p>' +
+        '<div class="btn-row"><button type="button" class="btn btn-primary" data-action="start-own" data-fk="start-own">Start my own league</button></div></div>';
+    } else if (!hasTeacherPin()) {
+      html += '<div class="notice is-warn"><p><b>Set a teacher PIN.</b> Until you do, anyone using this device can enter results, change settings and edit every profile.</p>' +
+        '<div class="btn-row"><button type="button" class="btn btn-primary" data-action="first-teacher-pin" data-fk="first-teacher-pin">Set teacher PIN</button></div></div>';
+    }
+    if (ui.teacher && hasTeacherPin()) {
+      html += '<div class="notice is-teacher"><p><b>Teacher mode is on.</b> You can make pairings, enter results, edit any profile and change settings. Lock it before students use the device.</p>' +
+        '<div class="btn-row"><button type="button" class="btn" data-action="lock" data-fk="lock-band">' + 'Lock now</button></div></div>';
+    }
+    $('#notices').innerHTML = html;
+  }
+
+  function renderTabs() {
+    TABS.forEach(function (t) {
+      var btn = $('#tab-' + t), panel = $('#panel-' + t), on = t === ui.tab;
+      btn.setAttribute('aria-selected', on ? 'true' : 'false');
+      btn.tabIndex = on ? 0 : -1;
+      panel.hidden = !on;
+    });
+    $('#count-trainers').textContent = state.trainers.filter(function (t) { return t.active; }).length;
+    $('#count-fixtures').textContent = state.weeks.length ? 'W' + state.weeks.length : '0';
+    var slot = $('#mode-slot');
+    if (!hasTeacherPin()) slot.innerHTML = '';
+    else if (ui.teacher) slot.innerHTML = '<button type="button" class="mode-btn is-on" data-action="lock" data-fk="mode" title="Teacher mode is on. Click to lock.">' + ICON_UNLOCK + '<span>Lock teacher mode</span></button>';
+    else slot.innerHTML = '<button type="button" class="mode-btn" data-action="teacher-unlock" data-fk="mode" title="Unlock teacher mode">' + ICON_LOCK + '<span>Teacher</span></button>';
+  }
+
+  function showTab(t) {
+    if (TABS.indexOf(t) < 0) return;
+    ui.tab = t;
+    saveUI();
+    if (location.hash.slice(1) !== t) {
+      try { history.replaceState(null, '', '#' + t); } catch (e) { try { location.hash = t; } catch (e2) { /* ignore */ } }
+    }
+    render();
+  }
+
+  /* ----- Trainers ----- */
+  function renderTrainers() {
+    var el = $('#panel-trainers');
+    var teach = canTeach();
+    var list = state.trainers.slice().sort(function (a, b) { return (b.active - a.active) || byName(a, b); });
+    var stand = computeStandings(state);
+    var used = inAnyMatch();
+    var active = list.filter(function (t) { return t.active; }).length;
+    var canJoin = teach || state.settings.allowSignup;
+    var sub = list.length
+      ? plural(list.length, 'trainer') + ' · ' + active + ' active' + (list.length - active ? ' · ' + (list.length - active) + ' dropped' : '')
+      : 'Everyone taking part has a trainer card here.';
+    var html = '<div class="panel-head"><div><h2>Trainers</h2><p>' + sub + '</p></div><div class="tools">' +
+      (teach ? '<button type="button" class="btn" data-action="toggle-bulk" aria-expanded="' + ui.bulkOpen + '" data-fk="toggle-bulk">Paste a class list</button>' : '') +
+      (canJoin ? '<button type="button" class="btn btn-primary" data-action="join" data-fk="join">' + (teach ? 'Add a trainer' : 'Join the league') + '</button>' : '') +
+      '</div></div>';
+    if (!teach) {
+      html += '<p class="hint">' + (state.settings.allowSignup ? 'New here? Tap <b>Join the league</b> to make your trainer card. ' : 'Ask your teacher to add you to the league. ') +
+        'To change your card, tap it and enter your PIN.</p>';
+    }
+    if (teach && ui.bulkOpen) {
+      html += '<div class="card bulk"><h3>Paste a class list</h3>' +
+        '<textarea id="bulk-text" class="input" rows="6" placeholder="Aisha Khan, 7A&#10;Omar Haddad, 7B, Fire&#10;Priya Nair" data-fk="bulk-text"></textarea>' +
+        '<p class="small muted">One trainer per line. Put a class after a comma, and a deck after a second comma. Pasted trainers start without a PIN: open their card in teacher mode and let them type one.</p>' +
+        '<p class="form-msg" id="bulk-msg" role="status"></p>' +
+        '<div class="btn-row"><button type="button" class="btn btn-primary" data-action="bulk-add" data-fk="bulk-add">Add everyone</button><button type="button" class="btn btn-quiet" data-action="toggle-bulk">Close</button></div></div>';
+    }
+    if (!list.length) {
+      html += '<div class="empty"><b>No trainers yet</b><span>' + (canJoin ? 'Tap ' + (teach ? 'Add a trainer' : 'Join the league') + ' to make the first trainer card.' : 'Your teacher will add trainers here.') + '</span></div>';
+      el.innerHTML = html;
+      return;
+    }
+    html += '<div class="pgrid">';
+    list.forEach(function (t) {
+      var r = stand.byId.get(t.id);
+      var c = ui.confirm === 'del:' + t.id;
+      var locked = used.has(t.id);
+      var meta = [t.cls, t.deck].filter(Boolean).map(esc).join(' · ');
+      html += '<div class="pcard' + (t.active ? '' : ' is-dropped') + '">' +
+        '<button type="button" class="pcard-main" data-action="open-trainer" data-id="' + t.id + '" data-fk="card-' + t.id + '">' +
+          avatarHTML(t, 60) +
+          '<span class="pc-text"><span class="pc-name">' + esc(t.name) + '</span>' +
+          (t.nick ? '<span class="pc-nick">' + esc(t.nick) + '</span>' : '') +
+          (meta ? '<span class="pc-meta">' + meta + '</span>' : '') +
+          (t.fav ? '<span class="pc-fav">Favourite: ' + esc(t.fav) + '</span>' : '') +
+          '</span></button>' +
+        '<div class="pcard-foot"><span class="rstats">' + (r.w + r.byes) + '-' + r.l + '-' + r.d + ' · <span class="pts-mini' + (ui.flash === t.id ? ' bump' : '') + '">' + r.total + '</span> pts</span>' +
+          (!t.active && !teach ? '<span class="chip">Dropped</span>' : '') +
+          (teach && !t.pinHash ? '<span class="chip chip-warn" title="This student can\'t edit their card until a PIN is set">No PIN</span>' : '') +
+          (teach ? awardButtons(t, 'gaw', true) : '') +
+          (teach ? '<button type="button" class="status-btn" aria-pressed="' + t.active + '" title="' + (t.active ? 'In new pairings. Click to drop.' : 'Left out of new pairings. Click to bring back.') + '" data-action="t-status" data-id="' + t.id + '" data-fk="ts-' + t.id + '">' + (t.active ? 'Active' : 'Dropped') + '</button>' +
+            (locked ? '' : '<button type="button" class="btn btn-sm ' + (c ? 'is-confirm' : 'btn-quiet') + '" data-action="t-del" data-id="' + t.id + '" data-fk="tx-' + t.id + '">' + (c ? 'Confirm' : 'Delete') + '</button>') : '') +
+        '</div></div>';
+    });
+    html += '</div>';
+    if (teach) html += '<p class="roster-note">Trainers who have played can\'t be deleted. Set them to Dropped to leave them out of new pairings and keep their results.</p>';
+    el.innerHTML = html;
+  }
+
+  function addTrainer(name, cls, deck) {
+    name = str(name, 40);
+    if (!name) return { ok: false, msg: 'Type a name first.' };
+    var lower = name.toLowerCase();
+    if (state.trainers.some(function (t) { return t.name.toLowerCase() === lower; })) {
+      return { ok: false, dup: true, msg: 'There\'s already a trainer called ' + name + '.' };
+    }
+    state.trainers.push({ id: uid(), name: name, cls: str(cls, 12), deck: str(deck, 30), active: true, nick: '', fav: '', motto: '', avatar: null, pinHash: null });
+    ui.present = null;
+    return { ok: true, msg: 'Added ' + name + '.' };
+  }
+
+  /* ----- Fixtures ----- */
+  function renderFixtures() {
+    var el = $('#panel-fixtures');
+    var teach = canTeach();
+    var weeks = state.weeks;
+    if (ui.week === 'new' && !teach) ui.week = null;
+    if (ui.week !== 'new' && !weekById(ui.week)) ui.week = weeks.length ? weeks[weeks.length - 1].id : (teach ? 'new' : null);
+    var html = '<div class="panel-head"><div><h2>Fixtures</h2><p>' +
+      (teach ? (weeks.length ? 'Pick a week to enter results, or make next week\'s pairings.' : 'Make the first week\'s pairings when everyone has arrived.')
+             : 'Find your table for this week. Tap a name to see that trainer\'s card.') +
+      '</p></div></div>';
+    if (!weeks.length && !teach) {
+      el.innerHTML = html + '<div class="empty"><b>No fixtures yet</b><span>Your teacher will post this week\'s pairings here.</span></div>';
+      return;
+    }
+    html += '<div class="weeks-rail" role="group" aria-label="Weeks">';
+    weeks.forEach(function (w, i) {
+      var s = weekStatus(w);
+      html += '<button type="button" class="wchip" aria-pressed="' + (ui.week === w.id) + '" data-action="pick-week" data-id="' + w.id + '" data-fk="wk-' + w.id + '">' +
+        '<b>Week ' + (i + 1) + '</b><small><span class="dot ' + s.state + '"></span>' +
+        (s.state === 'done' ? 'Done' : s.done + ' of ' + s.total) + (w.date ? ' · ' + esc(fmtDate(w.date)) : '') + '</small></button>';
+    });
+    if (teach) html += '<button type="button" class="wchip add" aria-pressed="' + (ui.week === 'new') + '" data-action="pick-week" data-id="new" data-fk="wk-new"><b>+ New week</b><small>Week ' + (weeks.length + 1) + '</small></button>';
+    html += '</div>';
+    html += ui.week === 'new' ? newWeekHTML() : weekHTML(weekById(ui.week), teach);
+    el.innerHTML = html;
+  }
+
+  function newWeekHTML() {
+    var n = state.weeks.length + 1;
+    var active = activeTrainers();
+    if (active.length < 2) {
+      return '<div class="empty"><b>Add at least two trainers first</b><span>Pairings are made from the trainers marked Active.</span>' +
+        '<button type="button" class="btn btn-primary" data-action="tab" data-tab="trainers">Go to Trainers</button></div>';
+    }
+    if (!ui.present) ui.present = new Set(active.map(function (t) { return t.id; }));
+    var present = active.filter(function (t) { return ui.present.has(t.id); });
+    var method = ui.newMethod || state.settings.pairing;
+    var date = ui.newDate || todayISO();
+    var prev = state.weeks[state.weeks.length - 1];
+    var ps = prev ? weekStatus(prev) : null;
+    var P = state.settings.points;
+    var html = '<div class="card new-week">' +
+      '<div class="nw-top"><h3>Week ' + n + '</h3>' +
+      '<div class="inline-field"><label for="nw-date">Date</label><input type="date" id="nw-date" class="input date-input" value="' + esc(date) + '" data-change="nw-date" data-fk="nw-date"></div></div>' +
+      '<fieldset class="field"><legend>How to pair</legend><div class="seg">' +
+        '<button type="button" class="seg-btn" aria-pressed="' + (method === 'swiss') + '" data-action="nw-method" data-v="swiss" data-fk="nwm-swiss"><b>Swiss</b><span>Trainers on similar points play each other, with no rematches. Used at official events.</span></button>' +
+        '<button type="button" class="seg-btn" aria-pressed="' + (method === 'random') + '" data-action="nw-method" data-v="random" data-fk="nwm-random"><b>Random</b><span>A new opponent each week, whatever their record.</span></button>' +
+      '</div></fieldset>' +
+      '<fieldset class="field"><div class="present-head"><legend>Who\'s here this week? <span class="muted">' + present.length + ' of ' + active.length + '</span></legend>' +
+        '<div class="btn-row"><button type="button" class="btn btn-quiet btn-sm" data-action="nw-all" data-fk="nw-all">Everyone</button><button type="button" class="btn btn-quiet btn-sm" data-action="nw-none" data-fk="nw-none">Nobody</button></div></div>' +
+        '<div class="present">' + active.map(function (t) {
+          return '<button type="button" class="pchip" aria-pressed="' + ui.present.has(t.id) + '" data-action="nw-toggle" data-id="' + t.id + '" data-fk="np-' + t.id + '"><span class="box" aria-hidden="true"></span>' +
+            avatarHTML(t, 24) + esc(t.name) + (t.cls ? ' <small>' + esc(t.cls) + '</small>' : '') + '</button>';
+        }).join('') + '</div></fieldset>';
+    if (ps && ps.state !== 'done') {
+      html += '<p class="warn" style="margin:0">Week ' + (n - 1) + ' still has ' + plural(ps.total - ps.done, 'match', 'matches') + ' without a result.' +
+        (method === 'swiss' ? ' Swiss pairings use the results entered so far.' : '') + '</p>';
+    }
+    html += '<div class="nw-go"><button type="button" class="btn btn-primary" data-action="make-pairings" data-fk="nw-go"' + (present.length < 2 ? ' disabled' : '') + '>Make pairings for ' + plural(present.length, 'trainer') + '</button>' +
+      '<span class="muted small">' + (present.length % 2 ? 'Odd number, so one trainer gets a bye worth ' + P.bye + ' points.' : '') + '</span></div>' +
+      '</div>';
+    return html;
+  }
+
+  function weekHTML(wk, teach) {
+    var idx = state.weeks.indexOf(wk), n = idx + 1;
+    var st = weekStatus(wk), editing = teach && ui.editWeek === wk.id;
+    var stand = computeStandings(state);
+    var isLast = idx === state.weeks.length - 1;
+    var hasResults = wk.matches.some(function (m) { return m.b && m.result; });
+    var cDel = ui.confirm === 'del-week:' + wk.id;
+    var P = state.settings.points;
+    var pct = st.total ? Math.round(st.done / st.total * 100) : 100;
+    var html = '<div class="week-head"><div class="week-title"><h3>Week ' + n + '</h3>';
+    if (teach) {
+      html += '<label class="vh" for="wd-' + wk.id + '">Date of week ' + n + '</label>' +
+        '<input type="date" id="wd-' + wk.id + '" class="input date-input" value="' + esc(wk.date || '') + '" data-change="week-date" data-id="' + wk.id + '" data-fk="wd-' + wk.id + '">';
+    } else if (wk.date) {
+      html += '<span class="week-date">' + esc(fmtDate(wk.date, true)) + '</span>';
+    }
+    html += '<span class="progress"><span class="meter" aria-hidden="true"><i style="width:' + pct + '%"></i></span>' + st.done + ' of ' + plural(st.total, 'result') + '</span></div>';
+    html += '<div class="tools">';
+    if (editing) {
+      html += '<button type="button" class="btn" data-action="add-match" data-id="' + wk.id + '" data-fk="add-match">Add match</button>' +
+        (hasResults ? '' : '<button type="button" class="btn" data-action="repair" data-id="' + wk.id + '" data-fk="repair">Re-pair everyone</button>') +
+        '<button type="button" class="btn btn-primary" data-action="done-edit" data-fk="done-edit">Done</button>';
+    } else if (teach) {
+      html += '<button type="button" class="btn" data-action="edit-week" data-id="' + wk.id + '" data-fk="edit-week">Edit pairings</button>' +
+        '<button type="button" class="btn" data-action="print-week" data-id="' + wk.id + '" data-fk="print-week">Print pairings</button>' +
+        (isLast ? '<button type="button" class="btn ' + (cDel ? 'is-confirm' : 'btn-danger') + '" data-action="del-week" data-id="' + wk.id + '" data-fk="del-week">' + (cDel ? 'Confirm: delete Week ' + n : 'Delete week') + '</button>' : '');
+    }
+    html += '</div></div>';
+
+    if (editing) {
+      html += '<p class="hint">Change who plays whom. Pick "Bye" for a trainer without an opponent. Changing a match clears its result.</p>';
+      html += '<ol class="slips">' + wk.matches.map(function (m) { return editSlipHTML(m, wk); }).join('') + '</ol>';
+      var count = {};
+      wk.matches.forEach(function (m) { count[m.a] = (count[m.a] || 0) + 1; if (m.b) count[m.b] = (count[m.b] || 0) + 1; });
+      var dups = Object.keys(count).filter(function (id) { return count[id] > 1; });
+      if (dups.length) html += '<p class="warn">' + dups.map(function (id) { return esc(tName(id)); }).join(', ') + (dups.length > 1 ? ' are' : ' is') + ' in more than one match this week.</p>';
+      var missing = activeTrainers().filter(function (t) { return !count[t.id]; });
+      if (missing.length) html += '<p class="info">Not playing this week: ' + missing.map(function (t) { return esc(t.name); }).join(', ') + '.</p>';
+    } else {
+      html += '<p class="hint">' + (teach
+        ? 'Tap the winner of each match, or Tie. Tap again to clear a result. Win ' + P.win + ' · Tie ' + P.tie + ' · Loss ' + P.loss + ' points.'
+        : 'Your teacher enters the results. Win ' + P.win + ' · Tie ' + P.tie + ' · Loss ' + P.loss + ' points.') + '</p>';
+      html += wk.matches.length ? '<ol class="slips">' + wk.matches.map(function (m) { return slipHTML(m, stand, teach); }).join('') + '</ol>'
+        : '<div class="empty"><b>No matches this week</b><span>' + (teach ? 'Use Edit pairings to add some.' : 'Check back later.') + '</span></div>';
+      if (teach) html += bonusHTML(wk);
+    }
+    return html;
+  }
+
+  function slipHTML(m, stand, teach) {
+    var P = state.settings.points;
+    if (!m.b) {
+      var bt = trainer(m.a) || { name: 'Unknown' };
+      return '<li class="slip bye"><span class="tno"><small>Table</small>–</span><div class="bye-line">' + avatarHTML(bt, 32) +
+        '<button type="button" class="trainer-link" data-action="open-trainer" data-id="' + m.a + '" data-fk="bye-' + m.id + '">' + esc(bt.name) + '</button>' +
+        '<span class="muted">has a bye this week</span><span class="tag t-bye">+' + P.bye + ' pts</span></div></li>';
+    }
+    var s = m.result || 'open';
+    function side(id, key) {
+      var t = trainer(id) || { name: 'Unknown', cls: '' }, r = stand.byId.get(id);
+      var tag = s === 'open' ? '' : s === 'tie' ? 'Tie' : s === key ? 'Win' : 'Loss';
+      var tcls = tag === 'Win' ? 't-win' : tag === 'Loss' ? 't-loss' : tag === 'Tie' ? 't-tie' : '';
+      var attrs = teach
+        ? 'data-action="result" data-m="' + m.id + '" data-r="' + key + '" aria-pressed="' + (s === key) + '" aria-label="' + esc(t.name) + ' wins"'
+        : 'data-action="open-trainer" data-id="' + id + '" aria-label="' + esc(t.name) + (tag ? ', ' + tag : '') + '. Open trainer card."';
+      return '<button type="button" class="pl pl-' + key + '" ' + attrs + ' data-fk="r-' + m.id + '-' + key + '">' + avatarHTML(t, 38) +
+        '<span class="pl-name">' + esc(t.name) + '</span><span class="pl-meta">' + (t.cls ? esc(t.cls) + ' · ' : '') + (r ? r.total : 0) + ' pts</span>' +
+        '<span class="tag ' + tcls + '">' + tag + '</span></button>';
+    }
+    var tie = teach
+      ? '<button type="button" class="tie-btn" data-action="result" data-m="' + m.id + '" data-r="tie" data-fk="r-' + m.id + '-tie" aria-pressed="' + (s === 'tie') + '" aria-label="Tie at table ' + m.table + '"><span class="vs">vs</span><span>Tie</span></button>'
+      : '<span class="tie-btn is-static"><span class="vs">vs</span>' + (s === 'tie' ? '<span>Tie</span>' : '') + '</span>';
+    return '<li class="slip" data-state="' + s + '"><span class="tno"><small>Table</small>' + m.table + '</span>' + side(m.a, 'a') + tie + side(m.b, 'b') + '</li>';
+  }
+
+  function editSlipHTML(m, wk) {
+    var usage = {};
+    wk.matches.forEach(function (o) {
+      if (o.id === m.id) return;
+      var label = o.b ? 'table ' + o.table : 'bye';
+      usage[o.a] = label; if (o.b) usage[o.b] = label;
+    });
+    var pool = activeTrainers();
+    [m.a, m.b].forEach(function (id) { if (id && !pool.some(function (t) { return t.id === id; })) { var t = trainer(id); if (t) pool.push(t); } });
+    pool.sort(byName);
+    function opts(sel, allowBye) {
+      return (allowBye ? '<option value=""' + (sel ? '' : ' selected') + '>Bye (no opponent)</option>' : '') +
+        pool.map(function (t) {
+          return '<option value="' + t.id + '"' + (t.id === sel ? ' selected' : '') + '>' + esc(t.name) + (usage[t.id] ? ' (also ' + usage[t.id] + ')' : '') + '</option>';
+        }).join('');
+    }
+    var label = m.b ? 'table ' + m.table : 'bye';
+    return '<li class="slip editing"><span class="tno"><small>Table</small>' + (m.b ? m.table : '–') + '</span>' +
+      '<select class="input sel-a" aria-label="First trainer, ' + label + '" data-change="edit-a" data-m="' + m.id + '" data-fk="ea-' + m.id + '">' + opts(m.a, false) + '</select>' +
+      '<span class="vs-txt" aria-hidden="true">vs</span>' +
+      '<select class="input sel-b" aria-label="Second trainer, ' + label + '" data-change="edit-b" data-m="' + m.id + '" data-fk="eb-' + m.id + '">' + opts(m.b, true) + '</select>' +
+      '<button type="button" class="icon-btn x" aria-label="Remove this match" data-action="remove-match" data-m="' + m.id + '" data-fk="rm-' + m.id + '">✕</button></li>';
+  }
+
+  function bonusHTML(wk) {
+    var ids = [];
+    wk.matches.forEach(function (m) { ids.push(m.a); if (m.b) ids.push(m.b); });
+    Object.keys(wk.bonus || {}).forEach(function (k) { if (wk.bonus[k] && trainer(k)) ids.push(k); });
+    ids = ids.filter(function (id, i) { return ids.indexOf(id) === i; }).sort(function (a, b) { return tName(a).localeCompare(tName(b)); });
+    if (!ids.length) return '';
+    var given = Object.keys(wk.bonus || {}).filter(function (k) { return wk.bonus[k]; });
+    return '<details class="bonus" id="bonus-' + wk.id + '"' + (ui.bonusOpen ? ' open' : '') + '><summary>Extra points <span class="muted">' +
+      (given.length ? plural(given.length, 'trainer') + ' given extra points this week' : 'Points added with the +3 and +1 buttons, or for sportsmanship') + '</span></summary>' +
+      '<div class="bonus-list">' + ids.map(function (id) {
+        var n = (wk.bonus && wk.bonus[id]) || 0, nm = esc(tName(id));
+        return '<div class="brow"><span>' + nm + '</span><div class="stepper">' +
+          '<button type="button" data-action="bonus" data-w="' + wk.id + '" data-id="' + id + '" data-d="-1" data-fk="bm-' + id + '" aria-label="One less extra point for ' + nm + '">−</button>' +
+          '<output aria-live="polite">' + (n > 0 ? '+' + n : n) + '</output>' +
+          '<button type="button" data-action="bonus" data-w="' + wk.id + '" data-id="' + id + '" data-d="1" data-fk="bp-' + id + '" aria-label="One more extra point for ' + nm + '">+</button></div></div>';
+      }).join('') + '</div><p class="small muted">Extra points add to a trainer\'s total but don\'t change their win-loss record or the tiebreakers.</p></details>';
+  }
+
+  /* ----- Standings ----- */
+  function standingsRows() {
+    var stand = computeStandings(state);
+    var rows = ui.hideDropped ? stand.rows.filter(function (r) { return r.t.active; }) : stand.rows;
+    return { stand: stand, rows: rows };
+  }
+
+  function renderStandings() {
+    var el = $('#panel-standings');
+    var teach = canTeach();
+    var rows = standingsRows().rows;
+    var last = lastResultWeekIndex();
+    var anyPoints = rows.some(function (r) { return r.total !== 0; });
+    var prevRank = null;
+    if (last >= 1) {
+      var prev = computeStandings(state, { upto: last - 1 }).rows;
+      if (ui.hideDropped) prev = prev.filter(function (r) { return r.t.active; });
+      prevRank = new Map(prev.map(function (r, i) { return [r.id, i + 1]; }));
+    }
+    var anyResult = last >= 0;
+    var anyBonus = rows.some(function (r) { return r.bonus; });
+    var weeks = state.weeks;
+    var fs = !!document.fullscreenElement;
+    var canFS = !!(document.fullscreenEnabled && el.requestFullscreen);
+    var html = '<div class="panel-head"><div><h2>Standings</h2><p>' +
+      (anyResult ? 'After Week ' + (last + 1) + '. Ties on points are split by opponents\' win %.' : anyPoints ? 'Points so far this season.' : 'The table fills in as points and results are added.') +
+      (teach ? ' Tap +3 or +1 to add points to a trainer' + (weeks.length ? ' for Week ' + weeks.length : '') + '.' : '') + '</p></div>' +
+      '<div class="tools">' +
+        '<label class="switch"><input type="checkbox" id="hide-dropped" data-change="hide-dropped" data-fk="hide-dropped"' + (ui.hideDropped ? ' checked' : '') + '> Hide dropped</label>' +
+        (teach ? '<button type="button" class="btn" data-action="copy-standings" data-fk="copy-st">Copy table</button>' +
+          '<button type="button" class="btn" data-action="print-standings" data-fk="print-st">Print</button>' : '') +
+        (canFS ? '<button type="button" class="btn btn-primary" data-action="present" data-fk="present">' + (fs ? 'Exit full screen' : 'Show on the board') + '</button>' : '') +
+      '</div></div>';
+
+    if (!state.trainers.length) {
+      el.innerHTML = html + '<div class="empty"><b>No trainers yet</b><span>Trainers appear here once they join and play.</span><button type="button" class="btn btn-primary" data-action="tab" data-tab="trainers">Go to Trainers</button></div>';
+      return;
+    }
+    html += '<div class="table-card"><div class="table-scroll"><table class="st' + (teach ? ' has-award' : '') + '"><thead>';
+    if (weeks.length) {
+      html += '<tr><th colspan="' + (7 + (anyBonus ? 1 : 0) + (teach ? 1 : 0)) + '"></th><th class="wkgroup" colspan="' + weeks.length + '">Points by week</th></tr>';
+    }
+    html += '<tr><th scope="col">#</th><th scope="col"><span class="vh">Change</span></th><th scope="col">Trainer</th>' +
+      '<th scope="col" class="num" title="Matches played, including byes">Played</th><th scope="col" class="num" title="Wins-Losses-Ties">W-L-T</th>' +
+      (anyBonus ? '<th scope="col" class="num" title="Points added with the +3 and +1 buttons">Extra</th>' : '') +
+      '<th scope="col" class="num">Pts</th>' +
+      (teach ? '<th scope="col">Add points</th>' : '') +
+      '<th scope="col" class="num" title="Opponents\' win percentage">OWP</th>' +
+      weeks.map(function (w, i) { return '<th scope="col" class="wkcol' + (i === 0 ? ' wkfirst' : '') + '" title="' + esc(fmtDate(w.date, true)) + '">W' + (i + 1) + '</th>'; }).join('') +
+      '</tr></thead><tbody>';
+    rows.forEach(function (r, i) {
+      var rank = i + 1, t = r.t;
+      var medal = rank <= 3 && r.total > 0 ? ' r' + rank : '';
+      var mv = '';
+      if (prevRank && prevRank.has(r.id)) {
+        var d = prevRank.get(r.id) - rank;
+        mv = d > 0 ? '<span class="move up" aria-label="Up ' + d + '">▲' + d + '</span>' : d < 0 ? '<span class="move down" aria-label="Down ' + (-d) + '">▼' + (-d) + '</span>' : '<span class="move same" aria-label="No change">–</span>';
+      }
+      var sub = [t.nick, t.cls].filter(Boolean).map(esc).join(' · ') + (t.active ? '' : ((t.nick || t.cls) ? ' · ' : '') + 'Dropped');
+      html += '<tr class="' + (t.active ? '' : 'is-dropped') + '">' +
+        '<td><span class="rank' + medal + '">' + rank + '</span></td><td class="move">' + mv + '</td>' +
+        '<td><div class="who">' + avatarHTML(t, 32) + '<div><button type="button" class="trainer-link" data-action="open-trainer" data-id="' + r.id + '" data-fk="st-' + r.id + '">' + esc(t.name) + '</button>' +
+          (sub ? '<span class="sub">' + sub + '</span>' : '') + '</div></div></td>' +
+        '<td class="num">' + (r.played + r.byes) + '</td>' +
+        '<td class="num">' + (r.w + r.byes) + '-' + r.l + '-' + r.d + '</td>' +
+        (anyBonus ? '<td class="num">' + (r.bonus ? (r.bonus > 0 ? '+' : '') + r.bonus : '–') + '</td>' : '') +
+        '<td class="num"><span class="pts' + (ui.flash === r.id ? ' bump' : '') + '">' + r.total + '</span></td>' +
+        (teach ? '<td>' + awardButtons(t, 'aw') + '</td>' : '') +
+        '<td class="num">' + (r.played ? Math.round(r.owp * 100) + '%' : '–') + '</td>' +
+        weeks.map(function (w, wi) { return '<td class="wkcol' + (wi === 0 ? ' wkfirst' : '') + '">' + weekCell(r.weekly[w.id], wi + 1, t.name) + '</td>'; }).join('') +
+        '</tr>';
+    });
+    html += '</tbody></table></div></div>';
+    var P = state.settings.points;
+    html += '<div class="key"><span><i class="wk wk-win">' + P.win + '</i>Win</span><span><i class="wk wk-tie">' + P.tie + '</i>Tie</span><span><i class="wk wk-loss">' + P.loss + '</i>Loss</span>' +
+      '<span><i class="wk wk-bye">' + P.bye + '</i>Bye</span><span><i class="wk wk-pending">…</i>Result to come</span><span><i class="wk wk-absent">–</i>Not playing</span>' +
+      '<span><i class="wk wk-extra">+3</i>Extra points only</span>' +
+      '<span>Small numbers are extra points. OWP is the average win rate of a trainer\'s opponents.</span></div>';
+    el.innerHTML = html;
+  }
+
+  function awardButtons(t, fk, noMinus) {
+    var nm = esc(t.name);
+    return '<span class="award">' +
+      '<button type="button" data-action="award" data-id="' + t.id + '" data-n="3" data-fk="' + fk + '3-' + t.id + '" aria-label="Add 3 points to ' + nm + '" title="Add 3 points">+3</button>' +
+      '<button type="button" data-action="award" data-id="' + t.id + '" data-n="1" data-fk="' + fk + '1-' + t.id + '" aria-label="Add 1 point to ' + nm + '" title="Add 1 point">+1</button>' +
+      (noMinus ? '' : '<button type="button" class="minus" data-action="award" data-id="' + t.id + '" data-n="-1" data-fk="' + fk + 'm-' + t.id + '" aria-label="Take 1 point away from ' + nm + '" title="Take 1 point away">−1</button>') +
+      '</span>';
+  }
+  function awardPoints(id, n) {
+    var t = trainer(id);
+    if (!t || !n) return;
+    var weekNo = state.weeks.length;
+    var wk = state.weeks[weekNo - 1];
+    var bucket = wk ? (wk.bonus = wk.bonus || {}) : (state.extra = state.extra || {});
+    function apply(d) {
+      bucket[id] = (bucket[id] || 0) + d;
+      if (!bucket[id]) delete bucket[id];
+      ui.flash = id;
+      commit(); render();
+      if (ui.dialog && ui.dialog.kind === 'view') renderDialog();
+      setTimeout(function () { if (ui.flash === id) ui.flash = null; }, 700);
+      return computeStandings(state).byId.get(id).total;
+    }
+    var total = apply(n);
+    var label = (n > 0 ? '+' + n : '−' + (-n)) + (Math.abs(n) === 1 ? ' point' : ' points');
+    toast(label + ' for ' + t.name + (wk ? ' in Week ' + weekNo : '') + '. Now on ' + total + '.', function () {
+      var back = apply(-n);
+      toast('Undone. ' + t.name + ' is back on ' + back + ' points.');
+    });
+  }
+
+  function weekCell(c, n, name) {
+    if (!c) return '<span class="wk wk-absent" title="' + esc(name) + ' didn\'t play in week ' + n + '">–</span>';
+    if (c.kind === 'none') return '<span class="wk wk-extra" title="Week ' + n + ': extra points only">' + (c.bonus > 0 ? '+' : '') + c.bonus + '</span>';
+    var label = { win: 'Win', loss: 'Loss', tie: 'Tie', bye: 'Bye', pending: 'Result to come' }[c.kind];
+    var sup = c.bonus ? '<sup>' + (c.bonus > 0 ? '+' : '') + c.bonus + '</sup>' : '';
+    var title = 'Week ' + n + ': ' + label + (c.kind !== 'pending' ? ' (' + c.pts + ')' : '') + (c.bonus ? ', extra ' + c.bonus : '');
+    if (c.kind === 'pending') return '<span class="wk wk-pending" title="' + esc(title) + '">…' + sup + '</span>';
+    return '<span class="wk wk-' + c.kind + '" title="' + esc(title) + '">' + c.pts + sup + '</span>';
+  }
+
+  /* ----- Setup ----- */
+  function renderSetup() {
+    var el = $('#panel-setup');
+    if (!canTeach()) {
+      el.innerHTML = '<div class="panel-head"><div><h2>Setup</h2><p>Tournament details, scoring, profiles and backups.</p></div></div>' +
+        '<div class="card lock-card"><h3>Setup is for teachers</h3><p class="muted">Unlock teacher mode with the teacher PIN to change the tournament\'s settings.</p>' +
+        '<div class="btn-row"><button type="button" class="btn btn-primary" data-action="teacher-unlock" data-fk="setup-unlock">Unlock teacher mode</button></div></div>';
+      return;
+    }
+    var s = state.settings, P = s.points;
+    var c = function (k) { return ui.confirm === k; };
+    var games = ['Pokémon TCG', 'Pokémon TCG Pocket', 'Pokémon video game', 'Pokémon GO', 'Other'];
+    function sel(list, v) { return list.map(function (x) { return '<option' + (x === v ? ' selected' : '') + '>' + esc(x) + '</option>'; }).join(''); }
+    var noPin = state.trainers.filter(function (t) { return !t.pinHash; }).length;
+    el.innerHTML =
+      '<div class="panel-head"><div><h2>Setup</h2><p>Tournament details, scoring, profiles and backups.</p></div></div>' +
+      '<div class="setup-grid">' +
+      '<section class="card"><h3>Tournament</h3>' +
+        '<div class="field"><label for="set-name">Tournament name</label><input id="set-name" class="input" maxlength="60" value="' + esc(s.name) + '" data-input="set-name" data-fk="set-name"></div>' +
+        '<div class="field-row">' +
+          '<div class="field"><label for="set-game">Game</label><select id="set-game" class="input" data-change="set-game" data-fk="set-game">' + sel(games.indexOf(s.game) < 0 ? games.concat([s.game]) : games, s.game) + '</select></div>' +
+          '<div class="field"><label for="set-format">Match format</label><select id="set-format" class="input" data-change="set-format" data-fk="set-format">' + sel(['Best of 1', 'Best of 3'], s.format) + '</select></div>' +
+        '</div>' +
+        '<div class="field-row">' +
+          '<div class="field"><label for="set-pairing">Usual pairing</label><select id="set-pairing" class="input" data-change="set-pairing" data-fk="set-pairing"><option value="swiss"' + (s.pairing === 'swiss' ? ' selected' : '') + '>Swiss</option><option value="random"' + (s.pairing === 'random' ? ' selected' : '') + '>Random</option></select></div>' +
+          '<div class="field"><label for="set-weeks">Weeks in the season</label><input id="set-weeks" class="input" type="number" min="1" max="40" inputmode="numeric" value="' + esc(s.weeksPlanned) + '" data-change="set-weeks" data-fk="set-weeks"></div>' +
+        '</div>' +
+      '</section>' +
+      '<section class="card"><h3>Profiles and PINs</h3>' +
+        '<p class="small">Each student edits only their own trainer card, using their own 4-digit PIN. Teacher mode can edit any card and reset a forgotten PIN.</p>' +
+        '<label class="switch"><input type="checkbox" id="set-signup" data-change="set-signup" data-fk="set-signup"' + (s.allowSignup ? ' checked' : '') + '> Students can join the league themselves</label>' +
+        '<label class="switch"><input type="checkbox" id="set-photos" data-change="set-photos" data-fk="set-photos"' + (s.allowPhotos ? ' checked' : '') + '> Allow profile pictures</label>' +
+        '<p class="small muted">Pictures are cropped small and stay on this device. Turn pictures off if your school prefers badges only; any pictures already added are hidden, not deleted.</p>' +
+        '<div class="field"><label for="set-lock">Lock teacher mode after</label><select id="set-lock" class="input" data-change="set-lock" data-fk="set-lock" style="max-width:240px">' +
+          [5, 10, 20, 30].map(function (m) { return '<option value="' + m + '"' + (s.lockMinutes === m ? ' selected' : '') + '>' + m + ' minutes without use</option>'; }).join('') + '</select></div>' +
+        (noPin ? '<p class="small"><span class="chip chip-warn">' + plural(noPin, 'trainer') + ' without a PIN</span> Open their card on the Trainers tab and let them type one.</p>' : '') +
+        '<div class="btn-row"><button type="button" class="btn" data-action="change-teacher-pin" data-fk="change-teacher-pin">' + (hasTeacherPin() ? 'Change teacher PIN' : 'Set teacher PIN') + '</button></div>' +
+      '</section>' +
+      '<section class="card"><h3>Points</h3>' +
+        '<div class="points-grid">' + ['win', 'tie', 'loss', 'bye'].map(function (k) {
+          return '<div class="field"><label for="pt-' + k + '">' + k.charAt(0).toUpperCase() + k.slice(1) + '</label><input id="pt-' + k + '" class="input" type="number" min="0" max="20" inputmode="numeric" value="' + P[k] + '" data-change="set-points" data-k="' + k + '" data-fk="pt-' + k + '"></div>';
+        }).join('') + '</div>' +
+        '<h4>How the table is ordered</h4>' +
+        '<ol class="rules"><li>Total points: match points plus any extra points added with the +3 and +1 buttons.</li>' +
+        '<li>Opponents\' win % (OWP): the average win rate of everyone a trainer has played. Each opponent counts as at least 25%.</li>' +
+        '<li>Opponents\' opponents\' win %: the same idea one step further out.</li><li>Number of wins, then name.</li></ol>' +
+        '<p class="small muted">A bye counts as a win in a trainer\'s record but isn\'t included in anyone\'s win %.</p>' +
+      '</section>' +
+      '<section class="card"><h3>Saving and backups</h3>' +
+        '<p class="small">Everything saves automatically in this browser on this device, including profile pictures. To move the league to another device, download a backup and restore it there. Clearing your browser history can remove saved data, so download a backup now and then.</p>' +
+        '<p class="small muted">A backup includes the teacher PIN, so restoring it brings that PIN back too.</p>' +
+        '<div class="btn-row"><button type="button" class="btn" data-action="export" data-fk="export">Download backup</button>' +
+        '<label class="btn" for="import-file">Restore a backup</label><input type="file" id="import-file" class="vh" accept=".json,application/json" data-change="import"></div>' +
+        '<hr><h4>Start again</h4>' +
+        '<div class="btn-row">' +
+          '<button type="button" class="btn ' + (c('reset-results') ? 'is-confirm' : '') + '" data-action="reset-results" data-fk="reset-results">' + (c('reset-results') ? 'Confirm: delete all weeks' : 'New season, same trainers') + '</button>' +
+          '<button type="button" class="btn ' + (c('reset-all') ? 'is-confirm' : 'btn-danger') + '" data-action="reset-all" data-fk="reset-all">' + (c('reset-all') ? 'Confirm: clear everything' : 'Clear everything') + '</button>' +
+        '</div>' +
+        '<p class="small muted">Clearing everything keeps your teacher PIN.</p>' +
+        '<button type="button" class="btn btn-quiet" style="justify-self:start" data-action="load-example" data-fk="load-example">' + (c('load-example') ? 'Confirm: replace with the example (teacher PIN 1234)' : 'Load the example league') + '</button>' +
+      '</section></div>';
+  }
+
+  function renderSaveState() {
+    var el = $('#save-state'), txt = $('#save-text');
+    el.classList.toggle('is-off', !storageOK);
+    if (!storageOK) txt.textContent = 'This browser isn\'t saving changes. Download a backup from Setup before closing.';
+    else if (lastSaved) txt.textContent = 'Saved in this browser at ' + lastSaved.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+    else txt.textContent = state.example ? 'Example league. Changes save automatically in this browser.' : 'Saves automatically in this browser';
+  }
+
+  /* ---------------- dialogs ---------------- */
+  function dlgHead(label) {
+    return '<div class="tc-foil"><span class="eyebrow">' + esc(label) + '</span><button type="button" class="icon-btn" data-action="close-dialog" aria-label="Close">✕</button></div>';
+  }
+  function msgHTML(err, ok) {
+    return '<p class="form-msg' + (err ? ' is-error' : ok ? ' is-ok' : '') + '" role="alert">' + esc(err || ok || '') + '</p>';
+  }
+  function pinField(id, label, max, fk, extra) {
+    return '<div class="field"><label for="' + id + '">' + label + '</label><input id="' + id + '" class="input pin-input" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="' + max + '" autocomplete="off" data-digits data-fk="' + (fk || id) + '"' + (extra || '') + '></div>';
+  }
+
+  function openDialog(d) { ui.dialog = d; renderDialog(true); }
+  function closeDialog() {
+    ui.dialog = null; ui.draft = null;
+    var dlg = $('#dlg');
+    if (dlg.open) { try { dlg.close(); } catch (e) { dlg.removeAttribute('open'); } }
+    dlg.innerHTML = '';
+  }
+  function renderDialog(first) {
+    var dlg = $('#dlg'), d = ui.dialog;
+    if (!d) { closeDialog(); return; }
+    var a = document.activeElement;
+    var fk = a && dlg.contains(a) ? a.getAttribute('data-fk') : null;
+    var top = dlg.scrollTop;
+    dlg.className = 'tcard' + (d.kind === 'editor' || d.kind === 'view' ? ' wide' : '');
+    dlg.innerHTML = dialogHTML(d);
+    if (!dlg.open) {
+      if (dlg.showModal) { try { dlg.showModal(); } catch (e) { dlg.setAttribute('open', ''); } }
+      else dlg.setAttribute('open', '');
+    }
+    var target = null;
+    if (first) { dlg.scrollTop = 0; target = dlg.querySelector('[data-autofocus]'); }
+    else {
+      dlg.scrollTop = top;
+      target = (fk && dlg.querySelector('[data-fk="' + fk + '"]')) || dlg.querySelector('[data-autofocus]');
+    }
+    if (target) { try { target.focus({ preventScroll: true }); } catch (e) { target.focus(); } }
+  }
+  function dialogHTML(d) {
+    if (d.kind === 'view') return viewHTML(d);
+    if (d.kind === 'pin') return pinHTML(d);
+    if (d.kind === 'editor') return editorHTML();
+    if (d.kind === 'teacher') return d.recover ? recoverHTML(d) : teacherHTML(d);
+    if (d.kind === 'set-teacher') return setTeacherHTML(d);
+    if (d.kind === 'recovery') return recoveryHTML(d);
+    return '';
+  }
+
+  function viewHTML(d) {
+    var stand = computeStandings(state), r = stand.byId.get(d.id);
+    if (!r) return dlgHead('Trainer card') + '<div class="tc-body"><p>This trainer isn\'t in the league any more.</p></div>';
+    var P = state.settings.points, t = r.t, id = t.id;
+    var rank = stand.rows.indexOf(r) + 1;
+    var hist = state.weeks.map(function (w, i) {
+      var m = w.matches.filter(function (x) { return x.a === id || x.b === id; })[0];
+      var bn = w.bonus && w.bonus[id] ? w.bonus[id] : 0;
+      var b = bn ? ' <span class="muted small">extra ' + (bn > 0 ? '+' : '') + bn + '</span>' : '';
+      if (!m && bn) return '<li><span class="h-wk">W' + (i + 1) + '</span><span>Extra points</span><i class="wk wk-extra">' + (bn > 0 ? '+' : '') + bn + '</i></li>';
+      if (!m) return '<li><span class="h-wk">W' + (i + 1) + '</span><span class="muted">Not playing</span><span></span></li>';
+      if (!m.b) return '<li><span class="h-wk">W' + (i + 1) + '</span><span>Bye' + b + '</span><i class="wk wk-bye">' + P.bye + '</i></li>';
+      var opp = m.a === id ? m.b : m.a, mine = m.a === id ? 'a' : 'b';
+      var res = !m.result ? 'pending' : m.result === 'tie' ? 'tie' : m.result === mine ? 'win' : 'loss';
+      var verb = { win: 'Beat', loss: 'Lost to', tie: 'Tied with', pending: 'Playing' }[res];
+      var pts = { win: P.win, loss: P.loss, tie: P.tie, pending: '…' }[res];
+      return '<li><span class="h-wk">W' + (i + 1) + '</span><span>' + verb + ' <b>' + esc(tName(opp)) + '</b> <span class="muted small">table ' + m.table + '</span>' + b + '</span><i class="wk wk-' + res + '">' + pts + '</i></li>';
+    }).join('');
+    var meta = [t.cls, t.deck ? t.deck + ' deck' : ''].filter(Boolean).map(esc).join(' · ') || 'No class or deck added yet';
+    var teach = canTeach();
+    var season = state.extra && state.extra[id];
+    if (season) hist = '<li><span class="h-wk">–</span><span>Extra points before Week 1</span><i class="wk wk-extra">' + (season > 0 ? '+' : '') + season + '</i></li>' + hist;
+    var nW = state.weeks.length;
+    return dlgHead('Trainer card') +
+      '<div class="tc-body">' +
+        '<div class="tc-id">' + avatarHTML(t, 88) + '<div><h2 id="dlg-title">' + esc(t.name) + '</h2>' +
+          (t.nick ? '<span class="pc-nick">' + esc(t.nick) + '</span>' : '') +
+          '<span class="sub">' + meta + (t.active ? '' : ' · Dropped') + '</span></div></div>' +
+        (t.fav || t.motto ? '<div class="tc-about">' + (t.fav ? '<p><span class="muted">Favourite Pokémon:</span> <b>' + esc(t.fav) + '</b></p>' : '') +
+          (t.motto ? '<p class="motto">“' + esc(t.motto) + '”</p>' : '') + '</div>' : '') +
+        '<dl class="tc-figs"><div><dt>Rank</dt><dd>' + rank + '</dd></div><div><dt>Points</dt><dd><span class="pts-mini' + (ui.flash === id ? ' bump' : '') + '">' + r.total + '</span></dd></div><div><dt>W-L-T</dt><dd>' + (r.w + r.byes) + '-' + r.l + '-' + r.d + '</dd></div><div><dt>OWP</dt><dd>' + (r.played ? Math.round(r.owp * 100) + '%' : '–') + '</dd></div></dl>' +
+        (teach ? '<div class="award-row"><span class="lbl">Add points' + (nW ? ' for Week ' + nW : '') + '</span>' + awardButtons(t, 'vaw') +
+          (d.note ? '<span class="award-note" role="status">' + esc(d.note.msg) + (d.note.undo ? '<button type="button" class="btn btn-quiet btn-sm" data-action="undo-toast" data-fk="v-undo">Undo</button>' : '') + '</span>' : '') +
+          '</div>' : '') +
+        '<h3>Week by week</h3>' + (hist ? '<ol class="hist">' + hist + '</ol>' : '<p class="muted">No weeks played yet.</p>') +
+        '<div class="dlg-actions"><button type="button" class="btn" data-action="close-dialog" data-fk="v-close">Close</button>' +
+          '<button type="button" class="btn btn-primary" data-action="edit-profile" data-id="' + id + '" data-fk="v-edit" data-autofocus>' + (teach ? 'Edit this card' : 'Edit my card') + '</button></div>' +
+      '</div>';
+  }
+
+  function pinHTML(d) {
+    var t = trainer(d.id);
+    if (!t) return dlgHead('Edit card') + '<div class="tc-body"><p>This trainer isn\'t in the league any more.</p></div>';
+    var who = '<div class="tc-id">' + avatarHTML(t, 56) + '<div><h2 id="dlg-title">' + esc(t.name) + '</h2>';
+    if (!t.pinHash) {
+      return dlgHead('Edit card') + '<div class="tc-body">' + who + '</div></div>' +
+        '<p>This card doesn\'t have a PIN yet, so it can\'t be edited here. Ask your teacher to open it in teacher mode so you can choose a PIN.</p>' +
+        '<div class="dlg-actions"><button type="button" class="btn btn-primary" data-action="close-dialog" data-autofocus>OK</button></div></div>';
+    }
+    return dlgHead('Edit card') + '<form class="tc-body" data-form="pin" novalidate>' + who + '<span class="sub">Only ' + esc(t.name) + ' can change this card.</span></div></div>' +
+      pinField('pin-in', 'Enter your 4-digit PIN', 4, 'pin-in', ' data-autofocus') +
+      msgHTML(d.err) +
+      '<div class="dlg-actions"><button type="button" class="btn" data-action="close-dialog">Cancel</button><button type="submit" class="btn btn-primary">Unlock my card</button></div>' +
+      '<p class="small muted">Forgotten your PIN? Your teacher can reset it.</p></form>';
+  }
+
+  function teacherHTML(d) {
+    return dlgHead('Teacher mode') + '<form class="tc-body" data-form="teacher" novalidate><h2 id="dlg-title">Unlock teacher mode</h2>' +
+      '<p class="muted">Teacher mode lets you make pairings, enter results, edit any trainer card and change settings.</p>' +
+      pinField('teacher-pin', 'Teacher PIN', 8, 'teacher-pin', ' data-autofocus') +
+      msgHTML(d.err) +
+      '<div class="dlg-actions"><button type="button" class="btn" data-action="close-dialog">Cancel</button><button type="submit" class="btn btn-primary">Unlock</button></div>' +
+      '<button type="button" class="btn btn-quiet btn-sm" style="justify-self:start" data-action="forgot-teacher">Forgot the teacher PIN?</button></form>';
+  }
+  function recoverHTML(d) {
+    var none = !state.security.recoveryHash;
+    return dlgHead('Teacher mode') + '<form class="tc-body" data-form="recover" novalidate><h2 id="dlg-title">Reset the teacher PIN</h2>' +
+      (none
+        ? '<p>' + (state.example ? 'The example league has no recovery code. Its teacher PIN is 1234.' : 'This league has no recovery code, so the teacher PIN can\'t be reset here. If you have a backup file, restore it on another device and set a new PIN there.') + '</p>' +
+          '<div class="dlg-actions"><button type="button" class="btn btn-primary" data-action="back-teacher" data-autofocus>Back</button></div></form>'
+        : '<p class="muted">Type the recovery code you wrote down when you set the teacher PIN, then choose a new PIN.</p>' +
+          '<div class="field"><label for="rc-code">Recovery code</label><input id="rc-code" class="input" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="12" placeholder="ABCD-2345" data-fk="rc-code" data-autofocus style="font-family:var(--font-data);font-size:18px;letter-spacing:.08em;max-width:220px"></div>' +
+          '<div class="pin-row">' + pinField('rc-pin1', 'New teacher PIN (4 to 8 digits)', 8) + pinField('rc-pin2', 'Type it again', 8) + '</div>' +
+          msgHTML(d.err) +
+          '<div class="dlg-actions"><button type="button" class="btn" data-action="back-teacher">Back</button><button type="submit" class="btn btn-primary">Reset PIN</button></div></form>');
+  }
+  function setTeacherHTML(d) {
+    var head = { start: 'Start your own league', first: 'Set a teacher PIN', change: 'Change the teacher PIN' }[d.ctx];
+    var body = {
+      start: 'Choose a teacher PIN. You\'ll use it to make pairings, enter results, change settings and edit any trainer card. The example league will be cleared.',
+      first: 'Choose a teacher PIN. Once it\'s set, only you can make pairings, enter results and change settings, and students can only edit their own trainer cards.',
+      change: 'Choose a new teacher PIN. You\'ll get a new recovery code too.'
+    }[d.ctx];
+    return dlgHead('Teacher PIN') + '<form class="tc-body" data-form="set-teacher" novalidate><h2 id="dlg-title">' + head + '</h2><p class="muted">' + body + '</p>' +
+      '<div class="pin-row">' + pinField('st-pin1', 'Teacher PIN (4 to 8 digits)', 8, 'st-pin1', ' data-autofocus') + pinField('st-pin2', 'Type it again', 8) + '</div>' +
+      '<p class="small muted">Pick something students won\'t guess, and don\'t reuse a student\'s PIN.</p>' +
+      msgHTML(d.err) +
+      '<div class="dlg-actions"><button type="button" class="btn" data-action="close-dialog">Cancel</button><button type="submit" class="btn btn-primary">' + (d.ctx === 'start' ? 'Start my league' : 'Save PIN') + '</button></div></form>';
+  }
+  function recoveryHTML(d) {
+    return dlgHead('Teacher PIN saved') + '<div class="tc-body"><h2 id="dlg-title">Write down this recovery code</h2>' +
+      '<p>If you ever forget the teacher PIN, this code lets you set a new one. Keep it somewhere students can\'t see. It won\'t be shown again.</p>' +
+      '<div class="code" id="rc-show">' + esc(d.code) + '</div>' +
+      '<div class="dlg-actions"><button type="button" class="btn" data-action="copy-code" data-fk="copy-code">Copy code</button>' +
+      '<button type="button" class="btn btn-primary" data-action="recovery-done" data-fk="rc-done" data-autofocus>I\'ve written it down</button></div></div>';
+  }
+
+  /* ----- profile editor ----- */
+  function openEditor(id, auth) {
+    var t = id ? trainer(id) : null;
+    var av = t && t.avatar;
+    ui.draft = {
+      id: id || null, auth: auth,
+      name: t ? t.name : '', cls: t ? t.cls : '', nick: t ? t.nick : '', fav: t ? t.fav : '', deck: t ? t.deck : '', motto: t ? t.motto : '',
+      photo: av && av.kind === 'photo' ? av.src : null,
+      badgeType: av && av.kind === 'badge' ? av.type : (t ? defaultTypeFor(t) : 'fire'),
+      badgeText: av && av.kind === 'badge' ? av.text : '',
+      avTab: av && av.kind === 'photo' && state.settings.allowPhotos ? 'photo' : 'badge',
+      pin1: '', pin2: '', err: '', hadPin: !!(t && t.pinHash)
+    };
+    openDialog({ kind: 'editor' });
+  }
+  function draftAvatar(d) {
+    if (d.avTab === 'photo' && d.photo && state.settings.allowPhotos) return { kind: 'photo', src: d.photo };
+    return { kind: 'badge', type: d.badgeType, text: cleanBadgeText(d.badgeText) };
+  }
+  function draftPreview() {
+    var d = ui.draft;
+    return avatarHTML({ name: d.name || '?', deck: d.deck, avatar: draftAvatar(d) }, 104);
+  }
+  function editorHTML() {
+    var d = ui.draft;
+    if (!d) return '';
+    var isNew = !d.id, teach = d.auth === 'teacher';
+    var photosOK = state.settings.allowPhotos;
+    var title = isNew ? (teach ? 'Add a trainer' : 'Join the league') : (teach ? 'Edit ' + esc(d.name || 'trainer') + '\'s card' : 'Edit my card');
+    function f(id, key, label, max, ph, req) {
+      return '<div class="field"><label for="' + id + '">' + label + (req ? '' : ' <span class="muted" style="font-weight:400">(optional)</span>') + '</label>' +
+        '<input id="' + id + '" class="input" maxlength="' + max + '" autocomplete="off" value="' + esc(d[key]) + '" placeholder="' + esc(ph) + '" data-draft="' + key + '" data-fk="' + id + '"' + (key === 'name' ? ' data-autofocus' : '') + '></div>';
+    }
+    var avPanel;
+    if (d.avTab === 'photo' && photosOK) {
+      avPanel = '<div class="btn-row"><label class="btn" for="ed-file" data-fk="ed-file-btn">' + (d.photo ? 'Choose a different picture' : 'Choose a picture') + '</label>' +
+        '<input type="file" id="ed-file" class="vh" accept="image/*" data-change="ed-file">' +
+        (d.photo ? '<button type="button" class="btn btn-quiet" data-action="ed-remove-photo" data-fk="ed-remove">Remove picture</button>' : '') + '</div>' +
+        '<p class="small muted">Pick a picture or drop one on the circle. It\'s cropped to a square and saved only on this device.</p>';
+    } else {
+      avPanel = '<div class="types" role="group" aria-label="Badge colour">' + TYPES.map(function (ty) {
+          return '<button type="button" class="type-sw" aria-pressed="' + (d.badgeType === ty[0]) + '" title="' + ty[1] + '" aria-label="' + ty[1] + '" data-action="ed-type" data-v="' + ty[0] + '" data-fk="ty-' + ty[0] + '">' +
+            '<span class="av av-badge ty-' + ty[0] + '" style="--s:32px" aria-hidden="true"><svg viewBox="0 0 24 24"><path fill-rule="evenodd" d="' + ty[2] + '"/></svg></span></button>';
+        }).join('') + '</div>' +
+        '<div class="ed-badge-row"><div class="field"><label for="ed-badge-text">Badge letters</label><input id="ed-badge-text" class="input" maxlength="3" autocomplete="off" value="' + esc(d.badgeText) + '" placeholder="' + esc(initials(d.name)) + '" data-draft="badgeText" data-fk="ed-badge-text"></div>' +
+        '<span class="small muted" style="padding-bottom:10px">' + TYPE_MAP[d.badgeType].label + ' badge. Up to 3 letters; leave blank for initials.</span></div>';
+    }
+    var pinBlock;
+    if (isNew && !teach) {
+      pinBlock = '<div class="pin-box"><p><b>Choose a 4-digit PIN</b><br><span class="small muted">You\'ll need it to change your card. Keep it secret, and don\'t use 1234.</span></p>' +
+        '<div class="pin-row">' + pinField('ed-pin1', 'PIN', 4, 'ed-pin1', ' data-draft="pin1"') + pinField('ed-pin2', 'Type it again', 4, 'ed-pin2', ' data-draft="pin2"') + '</div></div>';
+    } else if (isNew && teach) {
+      pinBlock = '<div class="pin-box"><p><b>PIN</b> <span class="muted">(optional)</span><br><span class="small muted">Let the student type a 4-digit PIN now, or leave it blank and set one later from their card.</span></p>' +
+        '<div class="pin-row">' + pinField('ed-pin1', 'PIN', 4, 'ed-pin1', ' data-draft="pin1"') + pinField('ed-pin2', 'Type it again', 4, 'ed-pin2', ' data-draft="pin2"') + '</div></div>';
+    } else if (!teach) {
+      pinBlock = '<div class="pin-box"><p><b>Change my PIN</b> <span class="muted">(optional)</span><br><span class="small muted">Leave blank to keep your current PIN.</span></p>' +
+        '<div class="pin-row">' + pinField('ed-pin1', 'New PIN', 4, 'ed-pin1', ' data-draft="pin1"') + pinField('ed-pin2', 'Type it again', 4, 'ed-pin2', ' data-draft="pin2"') + '</div></div>';
+    } else {
+      pinBlock = '<div class="pin-box"><p><b>' + (d.hadPin ? 'Reset PIN' : 'Set a PIN') + '</b> <span class="muted">(optional)</span><br><span class="small muted">' +
+        (d.hadPin ? 'Use this if the student has forgotten their PIN. Leave blank to keep it.' : 'This card has no PIN yet. Let the student type one here so they can edit their own card later.') + '</span></p>' +
+        '<div class="pin-row">' + pinField('ed-pin1', 'New PIN', 4, 'ed-pin1', ' data-draft="pin1"') + pinField('ed-pin2', 'Type it again', 4, 'ed-pin2', ' data-draft="pin2"') + '</div></div>';
+    }
+    return dlgHead(isNew ? 'New trainer card' : 'Trainer card') +
+      '<form class="tc-body ed" data-form="editor" novalidate><h2 id="dlg-title">' + title + '</h2>' +
+        '<div class="ed-av"><div class="ed-drop" id="ed-preview" title="' + (photosOK ? 'Drop a picture here' : '') + '">' + draftPreview() + '</div>' +
+          '<div class="ed-av-controls">' +
+            (photosOK ? '<div class="seg2" role="group" aria-label="Avatar style"><button type="button" aria-pressed="' + (d.avTab === 'photo') + '" data-action="ed-tab" data-v="photo" data-fk="ed-tab-photo">Picture</button><button type="button" aria-pressed="' + (d.avTab !== 'photo') + '" data-action="ed-tab" data-v="badge" data-fk="ed-tab-badge">Badge</button></div>' : '<span class="lbl small muted" style="font-weight:700">Badge</span>') +
+            avPanel +
+          '</div></div>' +
+        '<div class="ed-grid">' +
+          f('ed-name', 'name', 'Name', 40, 'e.g. Aisha Khan', true) +
+          f('ed-cls', 'cls', 'Class', 12, 'e.g. 7A', false) +
+          f('ed-nick', 'nick', 'Trainer nickname', 24, 'e.g. Blaze', false) +
+          f('ed-fav', 'fav', 'Favourite Pokémon', 30, 'e.g. Pikachu', false) +
+          f('ed-deck', 'deck', 'Deck or team', 30, 'e.g. Fire', false) +
+          f('ed-motto', 'motto', 'Catchphrase', 60, 'e.g. Never give up!', false) +
+        '</div>' +
+        pinBlock +
+        msgHTML(d.err) +
+        '<div class="dlg-actions"><button type="button" class="btn" data-action="close-dialog">Cancel</button>' +
+          '<button type="submit" class="btn btn-primary" data-fk="ed-save">' + (isNew ? (teach ? 'Add trainer' : 'Join the league') : 'Save card') + '</button></div>' +
+      '</form>';
+  }
+  function setDraftErr(msg) { if (ui.draft) { ui.draft.err = msg; renderDialog(); } }
+  function applyPhoto(file) {
+    loadAvatarFile(file, function (data, err) {
+      if (!ui.draft) return;
+      if (err) ui.draft.err = err;
+      else { ui.draft.photo = data; ui.draft.avTab = 'photo'; ui.draft.err = ''; }
+      renderDialog();
+    });
+  }
+
+  /* ----- print, copy, export ----- */
+  function doPrint() { try { window.print(); } catch (e) { toast('Printing isn\'t available here. Open the downloaded file in your browser to print.'); } }
+  function printWeek(wk) {
+    var n = state.weeks.indexOf(wk) + 1, P = state.settings.points;
+    var byes = wk.matches.filter(function (m) { return !m.b; });
+    $('#print-sheet').innerHTML = '<h1>' + esc(state.settings.name) + '</h1><h2>Week ' + n + ' pairings' + (wk.date ? ' · ' + esc(fmtDate(wk.date, true)) : '') + '</h2>' +
+      '<table><thead><tr><th>Table</th><th>Trainer</th><th></th><th>Trainer</th><th>Winner (or TIE)</th></tr></thead><tbody>' +
+      wk.matches.filter(function (m) { return m.b; }).map(function (m) {
+        return '<tr><td class="t">' + m.table + '</td><td>' + esc(tName(m.a)) + '</td><td class="vs">vs</td><td>' + esc(tName(m.b)) + '</td><td class="box"></td></tr>';
+      }).join('') + '</tbody></table>' +
+      (byes.length ? '<p><b>Bye:</b> ' + byes.map(function (m) { return esc(tName(m.a)); }).join(', ') + ' (' + P.bye + ' points)</p>' : '') +
+      '<p>' + esc(state.settings.format) + '. Win ' + P.win + ', tie ' + P.tie + ', loss ' + P.loss + ' points.</p>';
+    doPrint();
+  }
+  function printStandings() {
+    var rows = standingsRows().rows, last = lastResultWeekIndex();
+    $('#print-sheet').innerHTML = '<h1>' + esc(state.settings.name) + '</h1><h2>Standings' + (last >= 0 ? ' after Week ' + (last + 1) : '') + '</h2>' +
+      '<table><thead><tr><th>#</th><th>Trainer</th><th>Class</th><th>W-L-T</th><th>Points</th><th>OWP</th></tr></thead><tbody>' +
+      rows.map(function (r, i) {
+        return '<tr><td class="t">' + (i + 1) + '</td><td>' + esc(r.t.name) + '</td><td>' + esc(r.t.cls) + '</td><td class="r">' + (r.w + r.byes) + '-' + r.l + '-' + r.d + '</td><td class="r"><b>' + r.total + '</b></td><td class="r">' + (r.played ? Math.round(r.owp * 100) + '%' : '–') + '</td></tr>';
+      }).join('') + '</tbody></table>';
+    doPrint();
+  }
+  function standingsText() {
+    var rows = standingsRows().rows, last = lastResultWeekIndex();
+    var lines = [state.settings.name + ': standings' + (last >= 0 ? ' after Week ' + (last + 1) : '')];
+    rows.forEach(function (r, i) {
+      lines.push((i + 1) + '. ' + r.t.name + (r.t.cls ? ' (' + r.t.cls + ')' : '') + ': ' + r.total + ' pts, ' + (r.w + r.byes) + '-' + r.l + '-' + r.d);
+    });
+    return lines.join('\n');
+  }
+  function copyText(text, okMsg, failMsgText) {
+    function fallback() {
+      var ta = document.createElement('textarea');
+      ta.value = text; ta.setAttribute('readonly', ''); ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.select();
+      var ok = false; try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+      document.body.removeChild(ta);
+      toast(ok ? okMsg : failMsgText);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(function () { toast(okMsg); }, fallback);
+    else fallback();
+  }
+  function exportBackup() {
+    var blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+    var slug = (state.settings.name || 'league').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'league';
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = slug + '-backup-' + todayISO() + '.json';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(a.href); }, 2000);
+    toast('Backup downloaded.');
+  }
+
+  var toastTimer = null;
+  function toast(msg, undo) {
+    var el = $('#toast');
+    ui.undo = undo || null;
+    /* An open trainer card covers the toast, so show the message inside the card instead */
+    if (ui.dialog && ui.dialog.kind === 'view' && $('#dlg').open && canTeach()) {
+      ui.dialog.note = { msg: msg, undo: !!undo };
+      renderDialog();
+      return;
+    }
+    el.textContent = '';
+    var span = document.createElement('span');
+    span.textContent = msg;
+    el.appendChild(span);
+    if (undo) {
+      var b = document.createElement('button');
+      b.type = 'button'; b.className = 'toast-btn'; b.textContent = 'Undo';
+      b.setAttribute('data-action', 'undo-toast');
+      el.appendChild(b);
+    }
+    el.classList.toggle('has-action', !!undo);
+    el.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { el.classList.remove('show'); ui.undo = null; }, undo ? 6000 : 3400);
+  }
+
+  function lockTeacher(msg) {
+    ui.teacher = false; ui.editWeek = null; ui.confirm = null; ui.bulkOpen = false;
+    if (ui.dialog) closeDialog();
+    render();
+    toast(msg || 'Teacher mode locked.');
+  }
+
+  /* ---------------- actions ---------------- */
+  var TEACHER_ONLY = new Set(['nw-method', 'nw-toggle', 'nw-all', 'nw-none', 'make-pairings', 'result', 'edit-week', 'done-edit', 'add-match',
+    'remove-match', 'repair', 'del-week', 'print-week', 'bonus', 't-status', 't-del', 'bulk-add', 'toggle-bulk', 'copy-standings',
+    'print-standings', 'export', 'reset-results', 'reset-all', 'load-example', 'change-teacher-pin', 'award', 'undo-toast']);
+  var TEACHER_CHANGES = new Set(['nw-date', 'week-date', 'edit-a', 'edit-b', 'set-game', 'set-format', 'set-pairing', 'set-weeks', 'set-points',
+    'set-signup', 'set-photos', 'set-lock', 'import']);
+
+  var actions = {
+    'tab': function (el) { showTab(el.getAttribute('data-tab')); },
+    'close-dialog': function () { closeDialog(); },
+    'teacher-unlock': function () {
+      if (!hasTeacherPin()) openDialog({ kind: 'set-teacher', ctx: 'first' });
+      else openDialog({ kind: 'teacher', err: '' });
+    },
+    'lock': function () { lockTeacher(); },
+    'start-own': function () { openDialog({ kind: 'set-teacher', ctx: 'start' }); },
+    'first-teacher-pin': function () { openDialog({ kind: 'set-teacher', ctx: 'first' }); },
+    'change-teacher-pin': function () { openDialog({ kind: 'set-teacher', ctx: hasTeacherPin() ? 'change' : 'first' }); },
+    'forgot-teacher': function () { if (ui.dialog) { ui.dialog.recover = true; ui.dialog.err = ''; renderDialog(true); } },
+    'back-teacher': function () { if (ui.dialog) { ui.dialog.recover = false; ui.dialog.err = ''; renderDialog(true); } },
+    'copy-code': function () { if (ui.dialog && ui.dialog.code) copyText(ui.dialog.code, 'Recovery code copied.', 'Couldn\'t copy here. Write the code down instead.'); },
+    'recovery-done': function () { closeDialog(); render(); },
+    'open-trainer': function (el) { openDialog({ kind: 'view', id: el.getAttribute('data-id') }); },
+    'edit-profile': function (el) {
+      var id = el.getAttribute('data-id');
+      if (!trainer(id)) return;
+      if (canTeach()) openEditor(id, 'teacher');
+      else openDialog({ kind: 'pin', id: id, err: '' });
+    },
+    'join': function () {
+      if (canTeach()) openEditor(null, 'teacher');
+      else if (state.settings.allowSignup) openEditor(null, 'student');
+    },
+    'ed-tab': function (el) { if (ui.draft) { ui.draft.avTab = el.getAttribute('data-v'); ui.draft.err = ''; renderDialog(); } },
+    'ed-type': function (el) { if (ui.draft) { ui.draft.badgeType = el.getAttribute('data-v'); renderDialog(); } },
+    'ed-remove-photo': function () { if (ui.draft) { ui.draft.photo = null; renderDialog(); } },
+    'pick-week': function (el) {
+      var id = el.getAttribute('data-id');
+      if (id === 'new' && !canTeach()) return;
+      ui.week = id; ui.editWeek = null; render();
+    },
+    'nw-method': function (el) { ui.newMethod = el.getAttribute('data-v'); render(); },
+    'nw-toggle': function (el) {
+      var id = el.getAttribute('data-id');
+      if (ui.present.has(id)) ui.present.delete(id); else ui.present.add(id);
+      render();
+    },
+    'nw-all': function () { ui.present = new Set(activeTrainers().map(function (t) { return t.id; })); render(); },
+    'nw-none': function () { ui.present = new Set(); render(); },
+    'make-pairings': function () {
+      var ids = activeTrainers().filter(function (t) { return ui.present.has(t.id); }).map(function (t) { return t.id; });
+      if (ids.length < 2) return;
+      var method = ui.newMethod || state.settings.pairing;
+      var res = makePairings(state, ids, method);
+      var wk = { id: uid(), date: ui.newDate || todayISO(), matches: res.matches, bonus: {} };
+      state.weeks.push(wk);
+      ui.week = wk.id; ui.present = null; ui.newDate = null; ui.newMethod = null;
+      commit(); render();
+      toast('Week ' + state.weeks.length + ' pairings are ready.' + (res.rematch ? ' Some trainers had to meet a previous opponent.' : ''));
+    },
+    'result': function (el) {
+      var f = findMatch(el.getAttribute('data-m'));
+      if (!f || !f.match.b) return;
+      var r = el.getAttribute('data-r');
+      f.match.result = f.match.result === r ? null : r;
+      commit(); render();
+    },
+    'edit-week': function (el) { ui.editWeek = el.getAttribute('data-id'); render(); },
+    'done-edit': function () { ui.editWeek = null; render(); },
+    'add-match': function (el) {
+      var wk = weekById(el.getAttribute('data-id'));
+      if (!wk) return;
+      var used = new Set();
+      wk.matches.forEach(function (m) { used.add(m.a); if (m.b) used.add(m.b); });
+      var act = activeTrainers();
+      var free = act.filter(function (t) { return !used.has(t.id); });
+      if (!act.length) return;
+      var a = (free[0] || act[0]).id, b = free[1] ? free[1].id : null;
+      wk.matches.push({ id: uid(), table: null, a: a, b: b, result: b ? null : 'bye' });
+      renumber(wk); commit(); render();
+    },
+    'remove-match': function (el) {
+      var f = findMatch(el.getAttribute('data-m'));
+      if (!f) return;
+      f.week.matches = f.week.matches.filter(function (m) { return m !== f.match; });
+      renumber(f.week); commit(); render();
+    },
+    'repair': function (el) {
+      var wk = weekById(el.getAttribute('data-id'));
+      if (!wk) return;
+      var ids = [];
+      wk.matches.forEach(function (m) { ids.push(m.a); if (m.b) ids.push(m.b); });
+      ids = ids.filter(function (id, i) { return ids.indexOf(id) === i; });
+      var res = makePairings(state, ids, state.settings.pairing, Math.random, wk.id);
+      wk.matches = res.matches;
+      commit(); render(); toast('New pairings made.' + (res.rematch ? ' Some trainers had to meet a previous opponent.' : ''));
+    },
+    'del-week': function (el) {
+      var id = el.getAttribute('data-id');
+      if (!askConfirm('del-week:' + id)) return;
+      state.weeks = state.weeks.filter(function (w) { return w.id !== id; });
+      ui.week = null; ui.editWeek = null;
+      commit(); render(); toast('Week deleted.');
+    },
+    'print-week': function (el) { var wk = weekById(el.getAttribute('data-id')); if (wk) printWeek(wk); },
+    'award': function (el) { awardPoints(el.getAttribute('data-id'), Number(el.getAttribute('data-n')) || 0); },
+    'undo-toast': function () {
+      var f = ui.undo; ui.undo = null;
+      $('#toast').classList.remove('show');
+      if (f) f();
+    },
+    'bonus': function (el) {
+      var wk = weekById(el.getAttribute('data-w')), id = el.getAttribute('data-id');
+      if (!wk) return;
+      wk.bonus = wk.bonus || {};
+      var n = Math.max(-99, Math.min(99, (wk.bonus[id] || 0) + Number(el.getAttribute('data-d'))));
+      if (n) wk.bonus[id] = n; else delete wk.bonus[id];
+      ui.bonusOpen = true; saveUI();
+      commit(); render();
+    },
+    't-status': function (el) {
+      var t = trainer(el.getAttribute('data-id'));
+      if (!t) return;
+      t.active = !t.active; ui.present = null;
+      commit(); render();
+      toast(t.active ? t.name + ' is back in the pairings.' : t.name + ' is dropped. Their results stay in the table.');
+    },
+    't-del': function (el) {
+      var id = el.getAttribute('data-id');
+      if (inAnyMatch().has(id)) return;
+      if (!askConfirm('del:' + id)) return;
+      var t = trainer(id);
+      state.trainers = state.trainers.filter(function (x) { return x.id !== id; });
+      ui.present = null;
+      commit(); render(); if (t) toast(t.name + ' deleted.');
+    },
+    'toggle-bulk': function () { ui.bulkOpen = !ui.bulkOpen; render(); if (ui.bulkOpen) { var ta = $('#bulk-text'); if (ta) ta.focus(); } },
+    'bulk-add': function () {
+      var ta = $('#bulk-text'), added = 0, skipped = 0;
+      if (!ta) return;
+      String(ta.value || '').split(/\r?\n/).forEach(function (line) {
+        var parts = line.split(/\t|,/).map(function (p) { return p.trim(); });
+        if (!parts[0]) return;
+        var r = addTrainer(parts[0], parts[1], parts[2]);
+        if (r.ok) added++; else skipped++;
+      });
+      var text = !added && !skipped ? 'Paste at least one name, one per line.'
+        : 'Added ' + plural(added, 'trainer') + '.' + (skipped ? ' Skipped ' + skipped + ' already on the list.' : '');
+      if (added) { commit(); render(); }
+      var msg = $('#bulk-msg');
+      if (msg) { msg.textContent = text; msg.className = 'form-msg ' + (added ? 'is-ok' : 'is-error'); }
+    },
+    'copy-standings': function () { copyText(standingsText(), 'Standings copied. Paste them into an email or message.', 'Couldn\'t copy here. Try Print instead.'); },
+    'print-standings': function () { printStandings(); },
+    'present': function () {
+      var p = $('#panel-standings');
+      if (document.fullscreenElement) { document.exitFullscreen().catch(function () {}); return; }
+      var req = p.requestFullscreen && p.requestFullscreen();
+      if (req && req.catch) req.catch(function () { toast('Full screen isn\'t available here.'); });
+    },
+    'export': function () { exportBackup(); },
+    'reset-results': function () {
+      if (!askConfirm('reset-results')) return;
+      state.weeks = []; state.extra = {}; state.example = false; ui.week = null; ui.editWeek = null;
+      state.trainers.forEach(function (t) { t.active = true; });
+      commit(); render(); toast('All weeks cleared. Trainers kept.');
+    },
+    'reset-all': function () {
+      if (!askConfirm('reset-all')) return;
+      state = emptyState(state.settings, state.security); ui.week = null; ui.editWeek = null; ui.present = null;
+      commit(); render(); toast('Everything cleared. Your teacher PIN is unchanged.');
+    },
+    'load-example': function () {
+      if (!state.example && !askConfirm('load-example')) return;
+      ui.confirm = null;
+      state = exampleState(); ui.week = null; ui.editWeek = null; ui.present = null; ui.teacher = false;
+      commit(); render(); toast('Example league loaded. Its teacher PIN is 1234.');
+    }
+  };
+
+  var forms = {
+    'pin': function (f) {
+      var d = ui.dialog, t = trainer(d.id);
+      if (!t || !t.pinHash) { closeDialog(); return; }
+      var lock = lockedMsg(t.id);
+      if (lock) { d.err = lock; renderDialog(); return; }
+      var v = f.querySelector('#pin-in').value;
+      if (hashWith(state.security.salt, t.id, v) === t.pinHash) { clearFails(t.id); openEditor(t.id, 'student'); }
+      else { d.err = failMsg(t.id); renderDialog(); }
+    },
+    'teacher': function (f) {
+      var d = ui.dialog;
+      var lock = lockedMsg('teacher');
+      if (lock) { d.err = lock; renderDialog(); return; }
+      var v = f.querySelector('#teacher-pin').value;
+      if (hasTeacherPin() && hashWith(state.security.salt, 'teacher', v) === state.security.teacherHash) {
+        clearFails('teacher'); ui.teacher = true; ui.lastActive = Date.now();
+        closeDialog(); render(); toast('Teacher mode is on.');
+      } else { d.err = failMsg('teacher'); renderDialog(); }
+    },
+    'recover': function (f) {
+      var d = ui.dialog, sec = state.security;
+      var lock = lockedMsg('recovery');
+      if (lock) { d.err = lock; renderDialog(); return; }
+      var code = normCode(f.querySelector('#rc-code').value), p1 = f.querySelector('#rc-pin1').value, p2 = f.querySelector('#rc-pin2').value;
+      if (!sec.recoveryHash || hashWith(sec.salt, 'recovery', code) !== sec.recoveryHash) { d.err = failMsg('recovery').replace('That PIN', 'That code'); renderDialog(); return; }
+      if (!/^\d{4,8}$/.test(p1)) { d.err = 'The new PIN needs 4 to 8 digits.'; renderDialog(); return; }
+      if (p1 !== p2) { d.err = 'The two PINs don\'t match. Type them again.'; renderDialog(); return; }
+      clearFails('recovery');
+      var newCode = setTeacherPin(sec, p1);
+      ui.teacher = true; ui.lastActive = Date.now();
+      commit();
+      openDialog({ kind: 'recovery', code: newCode });
+      render();
+    },
+    'set-teacher': function (f) {
+      var d = ui.dialog;
+      var p1 = f.querySelector('#st-pin1').value, p2 = f.querySelector('#st-pin2').value;
+      if (!/^\d{4,8}$/.test(p1)) { d.err = 'The teacher PIN needs 4 to 8 digits.'; renderDialog(); return; }
+      if (p1 !== p2) { d.err = 'The two PINs don\'t match. Type them again.'; renderDialog(); return; }
+      var code;
+      if (d.ctx === 'start') {
+        var sec = newSecurity();
+        code = setTeacherPin(sec, p1);
+        state = emptyState(null, sec);
+        ui.week = null; ui.editWeek = null; ui.present = null; ui.tab = 'trainers'; saveUI();
+        try { history.replaceState(null, '', '#trainers'); } catch (e) { /* ignore */ }
+      } else {
+        code = setTeacherPin(state.security, p1);
+      }
+      ui.teacher = true; ui.lastActive = Date.now();
+      commit();
+      openDialog({ kind: 'recovery', code: code });
+      render();
+    },
+    'editor': function () {
+      var d = ui.draft;
+      if (!d) return;
+      var teach = d.auth === 'teacher', isNew = !d.id;
+      if (teach && !canTeach()) { closeDialog(); toast('Teacher mode is locked. Unlock it to save changes.'); return; }
+      if (isNew && !teach && !state.settings.allowSignup) { setDraftErr('Joining is switched off. Ask your teacher to add you.'); return; }
+      var name = str(d.name, 40);
+      if (!name) { setDraftErr(teach ? 'Type the trainer\'s name.' : 'Type your name.'); return; }
+      var lower = name.toLowerCase();
+      if (state.trainers.some(function (t) { return t.id !== d.id && t.name.toLowerCase() === lower; })) {
+        setDraftErr('There\'s already a trainer called ' + name + '. Add an initial to tell you apart.'); return;
+      }
+      var needPin = isNew && !teach;
+      if (needPin || d.pin1 || d.pin2) {
+        if (!/^\d{4}$/.test(d.pin1)) { d.pin1 = ''; d.pin2 = ''; setDraftErr('A PIN is exactly 4 digits.'); return; }
+        if (d.pin1 !== d.pin2) { d.pin1 = ''; d.pin2 = ''; setDraftErr('The two PINs don\'t match. Type them again.'); return; }
+      }
+      var t = d.id ? trainer(d.id) : null;
+      if (d.id && !t) { setDraftErr('This trainer isn\'t in the league any more.'); return; }
+      var before = t ? JSON.stringify(t) : null;
+      if (!t) { t = { id: uid(), active: true, pinHash: null }; state.trainers.push(t); }
+      t.name = name; t.cls = str(d.cls, 12); t.nick = str(d.nick, 24); t.fav = str(d.fav, 30); t.deck = str(d.deck, 30); t.motto = str(d.motto, 60);
+      var prevPhoto = before ? JSON.parse(before).avatar : null;
+      t.avatar = draftAvatar(d);
+      if (!state.settings.allowPhotos && prevPhoto && prevPhoto.kind === 'photo' && d.avTab !== 'photo' && d.badgeType === defaultTypeFor(t) && !d.badgeText) t.avatar = prevPhoto;
+      if (d.pin1) t.pinHash = hashWith(state.security.salt, t.id, d.pin1);
+      if (!commit()) {
+        if (before) { var i = state.trainers.indexOf(t); state.trainers[i] = JSON.parse(before); }
+        else state.trainers = state.trainers.filter(function (x) { return x !== t; });
+        commit();
+        setDraftErr('This device has run out of space for pictures. Use a badge instead, or remove some pictures from other cards.');
+        return;
+      }
+      ui.present = null;
+      closeDialog(); render();
+      toast(isNew ? (teach ? name + ' added.' : 'Welcome to the league, ' + name + '!') : 'Card saved.');
+    }
+  };
+
+  var changes = {
+    'nw-date': function (el) { ui.newDate = el.value; },
+    'week-date': function (el) {
+      var wk = weekById(el.getAttribute('data-id'));
+      if (wk) { wk.date = el.value; commit(); render(); }
+    },
+    'edit-a': function (el) {
+      var f = findMatch(el.getAttribute('data-m'));
+      if (!f || f.match.a === el.value) return;
+      f.match.a = el.value; f.match.result = f.match.b ? null : 'bye';
+      renumber(f.week); commit(); render();
+    },
+    'edit-b': function (el) {
+      var f = findMatch(el.getAttribute('data-m'));
+      var v = el.value || null;
+      if (!f || f.match.b === v) return;
+      f.match.b = v; f.match.result = v ? null : 'bye';
+      renumber(f.week); commit(); render();
+    },
+    'hide-dropped': function (el) { ui.hideDropped = el.checked; saveUI(); render(); },
+    'set-game': function (el) { state.settings.game = el.value; commit(); renderHeader(); },
+    'set-format': function (el) { state.settings.format = el.value; commit(); renderHeader(); },
+    'set-pairing': function (el) { state.settings.pairing = el.value; ui.newMethod = null; commit(); renderHeader(); },
+    'set-weeks': function (el) {
+      var n = Math.max(1, Math.min(40, parseInt(el.value, 10) || 1));
+      el.value = n; state.settings.weeksPlanned = n; commit(); renderHeader();
+    },
+    'set-points': function (el) {
+      var k = el.getAttribute('data-k');
+      var n = Math.max(0, Math.min(20, parseInt(el.value, 10) || 0));
+      el.value = n; state.settings.points[k] = n; commit(); renderHeader();
+    },
+    'set-signup': function (el) { state.settings.allowSignup = el.checked; commit(); render(); },
+    'set-photos': function (el) { state.settings.allowPhotos = el.checked; commit(); render(); },
+    'set-lock': function (el) { state.settings.lockMinutes = Number(el.value) || 10; commit(); },
+    'ed-file': function (el) {
+      var file = el.files && el.files[0];
+      el.value = '';
+      if (file) applyPhoto(file);
+    },
+    'import': function (el) {
+      var file = el.files && el.files[0];
+      if (!file) return;
+      var reader = new FileReader();
+      reader.onload = function () {
+        try {
+          var data = JSON.parse(String(reader.result));
+          if (!data || !Array.isArray(data.trainers) || !Array.isArray(data.weeks)) throw new Error('shape');
+          var keepSec = state.security;
+          var next = normalize(data);
+          if (!(data.security && data.security.teacherHash)) next.security = keepSec;
+          state = next; ui.week = null; ui.editWeek = null; ui.present = null;
+          commit(); render(); toast('Backup restored: ' + plural(state.trainers.length, 'trainer') + ', ' + plural(state.weeks.length, 'week') + '.');
+        } catch (e) {
+          toast('That file isn\'t a league backup. Choose a .json file downloaded from this page.');
+        }
+        el.value = '';
+      };
+      reader.onerror = function () { toast('Couldn\'t read that file. Try choosing it again.'); el.value = ''; };
+      reader.readAsText(file);
+    }
+  };
+
+  var inputs = {
+    'set-name': function (el) { if (!canTeach()) return; state.settings.name = el.value.slice(0, 60); commit(); renderHeader(); }
+  };
+
+  function requireTeacher() {
+    if (canTeach()) return true;
+    openDialog({ kind: 'teacher', err: '' });
+    return false;
+  }
+
+  document.addEventListener('click', function (e) {
+    var el = e.target.closest('[data-action]');
+    if (!el || el.disabled) return;
+    var name = el.getAttribute('data-action');
+    var fn = actions[name];
+    if (!fn) return;
+    e.preventDefault();
+    if (TEACHER_ONLY.has(name) && !requireTeacher()) return;
+    fn(el, e);
+  });
+  document.addEventListener('change', function (e) {
+    var el = e.target.closest('[data-change]');
+    if (!el) return;
+    var name = el.getAttribute('data-change');
+    if (!changes[name]) return;
+    if (TEACHER_CHANGES.has(name) && !requireTeacher()) { render(); return; }
+    changes[name](el, e);
+  });
+  document.addEventListener('input', function (e) {
+    var el = e.target;
+    if (!el || !el.getAttribute) return;
+    if (el.hasAttribute('data-digits')) {
+      var clean = el.value.replace(/\D/g, '');
+      if (clean !== el.value) el.value = clean;
+    }
+    var dk = el.getAttribute('data-draft');
+    if (dk && ui.draft) {
+      if (dk === 'badgeText') { var bt = cleanBadgeText(el.value); if (bt !== el.value) el.value = bt; ui.draft.badgeText = bt; }
+      else ui.draft[dk] = el.value;
+      if (dk === 'name' || dk === 'badgeText' || dk === 'deck') {
+        var pv = $('#ed-preview'); if (pv) pv.innerHTML = draftPreview();
+        var bti = $('#ed-badge-text'); if (bti && dk === 'name') bti.placeholder = initials(ui.draft.name);
+      }
+      return;
+    }
+    var ik = el.getAttribute('data-input');
+    if (ik && inputs[ik]) inputs[ik](el, e);
+  });
+  document.addEventListener('submit', function (e) {
+    var f = e.target.closest('form[data-form]');
+    if (!f) return;
+    e.preventDefault();
+    var fn = forms[f.getAttribute('data-form')];
+    if (fn) fn(f);
+  });
+  document.addEventListener('toggle', function (e) {
+    if (e.target && e.target.classList && e.target.classList.contains('bonus')) { ui.bonusOpen = e.target.open; saveUI(); }
+  }, true);
+
+  /* Drop a picture onto the avatar circle in the editor */
+  document.addEventListener('dragover', function (e) {
+    var z = e.target.closest && e.target.closest('.ed-drop');
+    if (!z || !ui.draft || !state.settings.allowPhotos) return;
+    e.preventDefault(); z.classList.add('is-over');
+  });
+  document.addEventListener('dragleave', function (e) {
+    var z = e.target.closest && e.target.closest('.ed-drop');
+    if (z) z.classList.remove('is-over');
+  });
+  document.addEventListener('drop', function (e) {
+    var z = e.target.closest && e.target.closest('.ed-drop');
+    if (!z || !ui.draft || !state.settings.allowPhotos) return;
+    e.preventDefault(); z.classList.remove('is-over');
+    var file = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+    if (file) applyPhoto(file);
+  });
+
+  var dlg = $('#dlg');
+  dlg.addEventListener('click', function (e) { if (e.target === dlg) closeDialog(); });
+  dlg.addEventListener('cancel', function (e) { e.preventDefault(); closeDialog(); });
+
+  $('#tabs').addEventListener('keydown', function (e) {
+    if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft' && e.key !== 'Home' && e.key !== 'End') return;
+    var i = TABS.indexOf(ui.tab);
+    i = e.key === 'Home' ? 0 : e.key === 'End' ? TABS.length - 1 : (i + (e.key === 'ArrowRight' ? 1 : -1) + TABS.length) % TABS.length;
+    e.preventDefault();
+    showTab(TABS[i]);
+    $('#tab-' + TABS[i]).focus();
+  });
+
+  window.addEventListener('hashchange', function () {
+    var h = location.hash.slice(1);
+    if (TABS.indexOf(h) >= 0 && h !== ui.tab) showTab(h);
+  });
+  document.addEventListener('fullscreenchange', function () { if (ui.tab === 'standings') render(); });
+
+  /* Teacher mode locks itself after a spell without use */
+  function touch() { if (ui.teacher) ui.lastActive = Date.now(); }
+  document.addEventListener('pointerdown', touch, true);
+  document.addEventListener('keydown', touch, true);
+  setInterval(function () {
+    if (ui.teacher && hasTeacherPin() && Date.now() - ui.lastActive > state.settings.lockMinutes * 60000) {
+      lockTeacher('Teacher mode locked after ' + state.settings.lockMinutes + ' minutes without use.');
+    }
+  }, 15000);
+
+  /* ---------------- start ---------------- */
+  var h = location.hash.slice(1);
+  ui.tab = TABS.indexOf(h) >= 0 ? h : (TABS.indexOf(savedUI.tab) >= 0 ? savedUI.tab : 'trainers');
+  render();
+  renderSaveState();
+})();
+</script>
+</body>
+</html>
